@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AxioN! Tips</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #0b0f19;
+      color: #fff;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1100px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .logo {
+      text-align: center;
+      font-size: 32px;
+      font-weight: bold;
+      margin: 20px 0 30px;
+    }
+
+    .logo span {
+      color: #00e676;
+    }
+
+    .card {
+      background: #151b29;
+      border: 1px solid #252d40;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      color: #ccc;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+
+    input,
+    select,
+    button,
+    textarea {
+      width: 100%;
+      padding: 13px;
+      margin-top: 8px;
+      margin-bottom: 12px;
+      border-radius: 10px;
+      border: 1px solid #30394d;
+      background: #0f1420;
+      color: white;
+      font-size: 15px;
+    }
+
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    button {
+      background: #00c853;
+      color: white;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: .9;
+    }
+
+    .secondary {
+      background: #252d40;
+    }
+
+    .danger {
+      background: #d32f2f;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .auth-box {
+      max-width: 450px;
+      margin: 50px auto;
+    }
+
+    .switch {
+      text-align: center;
+      margin-top: 10px;
+      color: #00e676;
+      cursor: pointer;
+      padding: 10px;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .stat {
+      background: #151b29;
+      border: 1px solid #252d40;
+      border-radius: 14px;
+      padding: 18px;
+    }
+
+    .stat small {
+      color: #999;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .stat strong {
+      font-size: 23px;
+    }
+
+    .green {
+      color: #00e676;
+    }
+
+    .red {
+      color: #ff5252;
+    }
+
+    .yellow {
+      color: #ffd740;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .bet {
+      background: #101622;
+      border: 1px solid #273148;
+      border-radius: 14px;
+      padding: 15px;
+      margin-bottom: 10px;
+    }
+
+    .bet-title {
+      font-weight: bold;
+      font-size: 17px;
+      margin-bottom: 8px;
+    }
+
+    .bet-info {
+      color: #aaa;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 5px 9px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      margin-top: 8px;
+    }
+
+    .badge-green {
+      background: #064d2b;
+      color: #00e676;
+    }
+
+    .badge-red {
+      background: #5c1111;
+      color: #ff5252;
+    }
+
+    .badge-pending {
+      background: #514300;
+      color: #ffd740;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      gap: 10px;
+    }
+
+    .topbar button {
+      width: auto;
+      padding: 10px 15px;
+      margin: 0;
+    }
+
+    .message {
+      text-align: center;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      display: none;
+    }
+
+    .message.error {
+      display: block;
+      background: #5c1111;
+      color: #ff8a80;
+    }
+
+    .message.success {
+      display: block;
+      background: #064d2b;
+      color: #69f0ae;
+    }
+
+    .empty {
+      text-align: center;
+      color: #777;
+      padding: 30px;
+    }
+
+    .profit-positive {
+      color: #00e676;
+    }
+
+    .profit-negative {
+      color: #ff5252;
+    }
+
+    .loading {
+      text-align: center;
+      color: #aaa;
+      padding: 20px;
+    }
+
+    @media (max-width: 800px) {
+      .dashboard {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .container {
+        padding: 12px;
+      }
+
+      .logo {
+        font-size: 27px;
+      }
+
+      .dashboard {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .stat {
+        padding: 13px;
+      }
+
+      .stat strong {
+        font-size: 19px;
+      }
+
+      .card {
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- =========================
+     LOGIN / CADASTRO
+========================= -->
+
+<div id="authScreen" class="container">
+
+  <div class="logo">
+    AxioN<span>!</span> Tips
+  </div>
+
+  <div class="card auth-box">
+
+    <!-- LOGIN -->
+
+    <div id="loginBox">
+
+      <h2>Entrar</h2>
+
+      <div id="loginMessage" class="message"></div>
+
+      <label>E-mail</label>
+
+      <input
+        id="loginEmail"
+        type="email"
+        placeholder="seu@email.com"
+      >
+
+      <label>Senha</label>
+
+      <input
+        id="loginPassword"
+        type="password"
+        placeholder="Sua senha"
+      >
+
+      <button onclick="login()">
+        Entrar
+      </button>
+
+      <div
+        class="switch"
+        onclick="showRegister()"
+      >
+        Ainda não tenho conta
+      </div>
+
+    </div>
+
+
+    <!-- CADASTRO -->
+
+    <div id="registerBox" class="hidden">
+
+      <h2>Criar conta</h2>
+
+      <div id="registerMessage" class="message"></div>
+
+      <label>Nickname</label>
+
+      <input
+        id="registerNickname"
+        type="text"
+        placeholder="Ex: JuniorTips"
+      >
+
+      <label>E-mail</label>
+
+      <input
+        id="registerEmail"
+        type="email"
+        placeholder="seu@email.com"
+      >
+
+      <label>Senha</label>
+
+      <input
+        id="registerPassword"
+        type="password"
+        placeholder="Mínimo: 6 caracteres"
+      >
+
+      <button onclick="register()">
+        Criar conta
+      </button>
+
+      <div
+        class="switch"
+        onclick="showLogin()"
+      >
+        Já tenho uma conta
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =========================
+     APLICAÇÃO
+========================= -->
+
+<div id="appScreen" class="hidden">
+
+  <div class="container">
+
+    <!-- TOPO -->
+
+    <div class="topbar">
+
+      <div>
+
+        <div
+          class="logo"
+          style="margin:0;text-align:left;"
+        >
+          AxioN<span>!</span> Tips
+        </div>
+
+        <div
+          id="userNickname"
+          style="color:#aaa;"
+        ></div>
+
+      </div>
+
+      <button
+        class="danger"
+        onclick="logout()"
+      >
+        Sair
+      </button>
+
+    </div>
+
+
+    <!-- DASHBOARD -->
+
+    <div class="dashboard">
+
+      <div class="stat">
+
+        <small>Banca</small>
+
+        <strong id="bankroll">
+          R$ 0,00
+        </strong>
+
+      </div>
+
+
+      <div class="stat">
+
+        <small>Greens</small>
+
+        <strong
+          id="greens"
+          class="green"
+        >
+          0
+        </strong>
+
+      </div>
+
+
+      <div class="stat">
+
+        <small>Reds</small>
+
+        <strong
+          id="reds"
+          class="red"
+        >
+          0
+        </strong>
+
+      </div>
+
+
+      <div class="stat">
+
+        <small>Acerto</small>
+
+        <strong
+          id="hitRate"
+          class="yellow"
+        >
+          0%
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <!-- RESUMO -->
+
+    <div class="card">
+
+      <h2>📊 Resumo</h2>
+
+      <div class="grid">
+
+        <div>
+
+          <small>
+            Lucro / Prejuízo
+          </small>
+
+          <h2 id="profit">
+            R$ 0,00
+          </h2>
+
+        </div>
+
+
+        <div>
+
+          <small>
+            Meta mensal
+          </small>
+
+          <h2 id="goal">
+            R$ 0,00
+          </h2>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- NOVA APOSTA -->
+
+    <div class="card">
+
+      <h2>⚽ Nova aposta</h2>
+
+      <div
+        id="betMessage"
+        class="message"
+      ></div>
+
+      <div class="grid">
+
+        <div>
+
+          <label>
+            Liga / Campeonato
+          </label>
+
+          <input
+            id="league"
+            placeholder="Ex: Brasileirão"
+          >
+
+        </div>
+
+
+        <div>
+
+          <label>
+            Data e hora
+          </label>
+
+          <input
+            id="matchDate"
+            type="datetime-local"
+          >
+
+        </div>
+
+
+        <div>
+
+          <label>
+            Mandante
+          </label>
+
+          <input
+            id="homeTeam"
+            placeholder="Time mandante"
+          >
+
+        </div>
+
+
+        <div>
+
+          <label>
+            Visitante
+          </label>
+
+          <input
+            id="awayTeam"
+            placeholder="Time visitante"
+          >
+
+        </div>
+
+
+        <div>
+
+          <label>
+            Mercado
+          </label>
+
+          <select id="market">
+
+            <option value="Resultado">
+              Resultado
+            </option>
+
+            <option value="Dupla Chance">
+              Dupla Chance
+            </option>
+
+            <option value="Total de Gols">
+              Total de Gols
+            </option>
+
+            <option value="Escanteios">
+              Escanteios
+            </option>
+
+            <option value="Cartões">
+              Cartões
+            </option>
+
+            <option value="Ambas Marcam">
+              Ambas Marcam
+            </option>
+
+            <option value="Handicap">
+              Handicap
+            </option>
+
+            <option value="Outro">
+              Outro
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div>
+
+          <label>
+            Seleção / Palpite
+          </label>
+
+          <input
+            id="selection"
+            placeholder="Ex: Mais de 1.5"
+          >
+
+        </div>
+
+
+        <div>
+
+          <label>
+            Odd
+          </label>
+
+          <input
+            id="odds"
+            type="number"
+            step="0.01"
+            min="1"
+            placeholder="1.50"
+          >
+
+        </div>
+
+
+        <div>
+
+          <label>
+            Valor apostado
+          </label>
+
+          <input
+            id="stake"
+            type="number"
+            step="0.01"
+            min="0.01"
+            placeholder="10.00"
+          >
+
+        </div>
+
+      </div>
+
+
+      <label>
+        Observações
+      </label>
+
+      <textarea
+        id="notes"
+        placeholder="Observações da aposta..."
+      ></textarea>
+
+
+      <button onclick="addBet()">
+        Adicionar aposta
+      </button>
+
+    </div>
+
+
+    <!-- HISTÓRICO -->
+
+    <div class="card">
+
+      <h2>📋 Histórico de apostas</h2>
+
+      <div class="grid">
+
+        <input
+          id="filterLeague"
+          placeholder="Filtrar por liga"
+          oninput="renderBets()"
+        >
+
+
+        <select
+          id="filterResult"
+          onchange="renderBets()"
+        >
+
+          <option value="">
+            Todos os resultados
+          </option>
+
+          <option value="PENDING">
+            Pendentes
+          </option>
+
+          <option value="GREEN">
+            Greens
+          </option>
+
+          <option value="RED">
+            Reds
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <button
+        class="secondary"
+        onclick="loadBets()"
+      >
+        Atualizar histórico
+      </button>
+
+
+      <div id="betsList"></div>
+
+    </div>
+
+
+    <!-- META -->
+
+    <div class="card">
+
+      <h2>🎯 Meta mensal</h2>
+
+      <input
+        id="goalInput"
+        type="number"
+        step="0.01"
+        min="0"
+        placeholder="Ex: 500"
+      >
+
+      <button onclick="saveGoal()">
+        Salvar meta
+      </button>
+
+      <div
+        id="goalMessage"
+        class="message"
+      ></div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+/* =========================
+   SUPABASE
+========================= */
+
+const SUPABASE_URL =
+  "https://lvdknawajdktnfuzlllp.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_Mb_5x7t0UFvzbd-Tup9E_w_lDflmVbK";
+
+const { createClient } = supabase;
+
+const db = createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+
+/* =========================
+   VARIÁVEIS
+========================= */
+
+let currentUser = null;
+
+let currentBets = [];
+
+let currentGoal = null;
+
+
+/* =========================
+   FUNÇÕES DE TELA
+========================= */
+
+function showLogin() {
+
+  document
+    .getElementById("loginBox")
+    .classList.remove("hidden");
+
+  document
+    .getElementById("registerBox")
+    .classList.add("hidden");
+
+  clearMessage("registerMessage");
+
+}
+
+
+function showRegister() {
+
+  document
+    .getElementById("loginBox")
+    .classList.add("hidden");
+
+  document
+    .getElementById("registerBox")
+    .classList.remove("hidden");
+
+  clearMessage("loginMessage");
+
+}
+
+
+function showMessage(id, text, type) {
+
+  const el =
+    document.getElementById(id);
+
+  if (!el) return;
+
+  el.textContent = text;
+
+  el.className =
+    "message " + type;
+
+}
+
+
+function clearMessage(id) {
+
+  const el =
+    document.getElementById(id);
+
+  if (!el) return;
+
+  el.textContent = "";
+
+  el.className = "message";
+
+}
+
+
+/* =========================
+   ESCAPAR HTML
+========================= */
+
+function escapeHtml(value) {
+
+  if (value === null || value === undefined) {
+    return "";
+  }
+
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+
+}
+
+
+/* =========================
+   FORMATAR DINHEIRO
+========================= */
+
+function money(value) {
+
+  return Number(value || 0)
+    .toLocaleString(
+      "pt-BR",
+      {
+        style: "currency",
+        currency: "BRL"
+      }
+    );
+
+}
+
+
+/* =========================
+   CADASTRO
+========================= */
+
+async function register() {
+
+  const nickname =
+    document
+      .getElementById("registerNickname")
+      .value
+      .trim();
+
+  const email =
+    document
+      .getElementById("registerEmail")
+      .value
+      .trim();
+
+  const password =
+    document
+      .getElementById("registerPassword")
+      .value;
+
+
+  if (!nickname || !email || !password) {
+
+    showMessage(
+      "registerMessage",
+      "Preencha todos os campos.",
+      "error"
+    );
+
+    return;
+  }
+
+
+  if (password.length < 6) {
+
+    showMessage(
+      "registerMessage",
+      "A senha deve ter pelo menos 6 caracteres.",
+      "error"
+    );
+
+    return;
+  }
+
+
+  const {
+    data,
+    error
+  } = await db.auth.signUp({
+
+    email: email,
+
+    password: password,
+
+    options: {
+
+      data: {
+        nickname: nickname
+      }
+
+    }
+
+  });
+
+
+  if (error) {
+
+    showMessage(
+      "registerMessage",
+      error.message,
+      "error"
+    );
+
+    return;
+  }
+
+
+  if (data.session) {
+
+    showMessage(
+      "registerMessage",
+      "Conta criada com sucesso!",
+      "success"
+    );
+
+    currentUser = data.user;
+
+    await loadApp();
+
+  } else {
+
+    showMessage(
+      "registerMessage",
+      "Conta criada! Agora faça login.",
+      "success"
+    );
+
+    setTimeout(
+      showLogin,
+      1500
+    );
+
+  }
+
+}
+
+
+/* =========================
+   LOGIN
+========================= */
+
+async function login() {
+
+  const email =
+    document
+      .getElementById("loginEmail")
+      .value
+      .trim();
+
+  const password =
+    document
+      .getElementById("loginPassword")
+      .value;
+
+
+  if (!email || !password) {
+
+    showMessage(
+      "loginMessage",
+      "Digite e-mail e senha.",
+      "error"
+    );
+
+    return;
+  }
+
+
+  const {
+    data,
+    error
+  } =
+    await db.auth.signInWithPassword({
+
+      email: email,
+
+      password: password
+
+    });
+
+
+  if (error) {
+
+    showMessage(
+      "loginMessage",
+      error.message,
+      "error"
+    );
+
+    return;
+  }
+
+
+  currentUser = data.user;
+
+  await loadApp();
+
+}
+
+
+/* =========================
+   LOGOUT
+========================= */
+
+async function logout() {
+
+  await db.auth.signOut();
+
+  currentUser = null;
+
+  currentBets = [];
+
+  currentGoal = null;
+
+  document
+    .getElementById("appScreen")
+    .classList.add("hidden");
+
+  document
+    .getElementById("authScreen")
+    .classList.remove("hidden");
+
+  showLogin();
+
+}
+
+
+/* =========================
+   CARREGAR APLICAÇÃO
+========================= */
+
+async function loadApp() {
+
+  const {
+    data: {
+      user
+    }
+  } =
+    await db.auth.getUser();
+
+
+  if (!user) {
+
+    return;
+
+  }
+
+
+  currentUser = user;
+
+
+  document
+    .getElementById("authScreen")
+    .classList.add("hidden");
+
+  document
+    .getElementById("appScreen")
+    .classList.remove("hidden");
+
+
+  const {
+    data: profile,
+    error: profileError
+  } =
+    await db
+      .from("profiles")
+      .select("*")
+      .eq("id", user.id)
+      .maybeSingle();
+
+
+  if (!profileError && profile) {
+
+    document
+      .getElementById("userNickname")
+      .textContent =
+      "Olá, " +
+      profile.nickname +
+      " 👋";
+
+  } else {
+
+    document
+      .getElementById("userNickname")
+      .textContent =
+      "Olá! 👋";
+
+  }
+
+
+  await loadBets();
+
+  await loadGoal();
+
+}
+
+
+/* =========================
+   ADICIONAR APOSTA
+========================= */
+
+async function addBet() {
+
+  if (!currentUser) {
+
+    return;
+
+  }
+
+
+  const league =
+    document
+      .getElementById("league")
+      .value
+      .trim();
+
+  const homeTeam =
+    document
+      .getElementById("homeTeam")
+      .value
+      .trim();
+
+  const awayTeam =
+    document
+      .getElementById("awayTeam")
+      .value
+      .trim();
+
+  const matchDate =
+    document
+      .getElementById("matchDate")
+      .value;
+
+  const market =
+    document
+      .getElementById("market")
+      .value;
+
+  const selection =
+    document
+      .getElementById("selection")
+      .value
+      .trim();
+
+  const odds =
+    parseFloat(
+      document
+        .getElementById("odds")
+        .value
+    );
+
+  const stake =
+    parseFloat(
+      document
+        .getElementById("stake")
+        .value
+    );
+
+  const notes =
+    document
+      .getElementById("notes")
+      .value
+      .trim();
+
+
+  if (
+    !homeTeam ||
+    !awayTeam ||
+    !market ||
+    !odds ||
+    !stake
+  ) {
+
+    showMessage(
+      "betMessage",
+      "Preencha os campos obrigatórios.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  if (odds < 1) {
+
+    showMessage(
+      "betMessage",
+      "A odd deve ser maior ou igual a 1.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  if (stake <= 0) {
+
+    showMessage(
+      "betMessage",
+      "O valor apostado deve ser maior que zero.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  const {
+    error
+  } =
+    await db
+      .from("bets")
+      .insert({
+
+        user_id:
+          currentUser.id,
+
+        league:
+          league,
+
+        home_team:
+          homeTeam,
+
+        away_team:
+          awayTeam,
+
+        match_date:
+          matchDate || null,
+
+        market:
+          market,
+
+        selection:
+          selection,
+
+        odds:
+          odds,
+
+        stake:
+          stake,
+
+        result:
+          "PENDING",
+
+        profit:
+          0,
+
+        notes:
+          notes
+
+      });
+
+
+  if (error) {
+
+    showMessage(
+      "betMessage",
+      error.message,
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  showMessage(
+    "betMessage",
+    "Aposta adicionada com sucesso!",
+    "success"
+  );
+
+
+  document
+    .getElementById("league")
+    .value = "";
+
+  document
+    .getElementById("homeTeam")
+    .value = "";
+
+  document
+    .getElementById("awayTeam")
+    .value = "";
+
+  document
+    .getElementById("selection")
+    .value = "";
+
+  document
+    .getElementById("odds")
+    .value = "";
+
+  document
+    .getElementById("stake")
+    .value = "";
+
+  document
+    .getElementById("notes")
+    .value = "";
+
+  document
+    .getElementById("matchDate")
+    .value = "";
+
+
+  await loadBets();
+
+}
+
+
+/* =========================
+   CARREGAR APOSTAS
+============

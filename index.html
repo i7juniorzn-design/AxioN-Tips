@@ -1,0 +1,2845 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AxioN! Tips</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      background: #07100b;
+      color: #f1f5f2;
+      min-height: 100vh;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* LOGIN / CADASTRO */
+
+    .auth-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background:
+        radial-gradient(
+          circle at top,
+          rgba(30, 255, 120, 0.12),
+          transparent 35%
+        ),
+        #07100b;
+    }
+
+    .auth-card {
+      width: 100%;
+      max-width: 430px;
+      background: #0c1710;
+      border: 1px solid #1c3023;
+      border-radius: 24px;
+      padding: 30px 24px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.45);
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .logo h1 {
+      font-size: 36px;
+      font-weight: 900;
+      letter-spacing: -1px;
+    }
+
+    .logo h1 span {
+      color: #20e878;
+    }
+
+    .logo p {
+      color: #82948a;
+      margin-top: 7px;
+      font-size: 14px;
+    }
+
+    .auth-card h2 {
+      margin-bottom: 18px;
+      font-size: 22px;
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    .field label {
+      display: block;
+      color: #9cac9f;
+      font-size: 13px;
+      margin-bottom: 7px;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      border: 1px solid #263c2d;
+      background: #08110b;
+      color: #fff;
+      border-radius: 12px;
+      padding: 13px;
+      outline: none;
+    }
+
+    .field textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: #20e878;
+    }
+
+    .primary-btn {
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+      padding: 14px;
+      background: #20e878;
+      color: #041008;
+      font-weight: 800;
+      margin-top: 5px;
+    }
+
+    .primary-btn:hover {
+      filter: brightness(1.08);
+    }
+
+    .secondary-btn {
+      width: 100%;
+      border: 1px solid #294332;
+      background: transparent;
+      color: #dce8df;
+      border-radius: 12px;
+      padding: 13px;
+      margin-top: 10px;
+    }
+
+    .auth-message {
+      margin-top: 14px;
+      text-align: center;
+      font-size: 13px;
+      color: #9cac9f;
+      min-height: 18px;
+    }
+
+    /* APP */
+
+    .app {
+      min-height: 100vh;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(7,16,11,.94);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid #18291e;
+    }
+
+    .topbar-inner {
+      max-width: 1180px;
+      margin: auto;
+      padding: 15px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    .brand {
+      font-size: 23px;
+      font-weight: 900;
+    }
+
+    .brand span {
+      color: #20e878;
+    }
+
+    .user-area {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .user-name {
+      color: #aab9ae;
+      font-size: 13px;
+    }
+
+    .logout-btn {
+      border: 1px solid #263c2d;
+      background: #0d1b12;
+      color: #dbe7de;
+      border-radius: 9px;
+      padding: 8px 11px;
+      font-size: 12px;
+    }
+
+    .container {
+      max-width: 1180px;
+      margin: auto;
+      padding: 24px 18px 50px;
+    }
+
+    .welcome {
+      margin-bottom: 22px;
+    }
+
+    .welcome h2 {
+      font-size: 26px;
+      margin-bottom: 5px;
+    }
+
+    .welcome p {
+      color: #82948a;
+      font-size: 14px;
+    }
+
+    /* STATS */
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: #0c1710;
+      border: 1px solid #1c3023;
+      border-radius: 17px;
+      padding: 17px;
+    }
+
+    .stat-label {
+      color: #82948a;
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 25px;
+      font-weight: 900;
+    }
+
+    .profit-positive {
+      color: #20e878;
+    }
+
+    .profit-negative {
+      color: #ff5d67;
+    }
+
+    /* GRID */
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      background: #0c1710;
+      border: 1px solid #1c3023;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 18px 20px;
+      border-bottom: 1px solid #1b2b20;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .panel-header h3 {
+      font-size: 17px;
+    }
+
+    .panel-header span {
+      color: #73867a;
+      font-size: 12px;
+    }
+
+    .panel-body {
+      padding: 20px;
+    }
+
+    /* FORM */
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    .save-bet {
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+      padding: 14px;
+      background: #20e878;
+      color: #041008;
+      font-weight: 900;
+      margin-top: 5px;
+    }
+
+    .form-info {
+      margin-bottom: 15px;
+      padding: 12px;
+      border-radius: 11px;
+      background: #09130d;
+      border: 1px solid #1b3021;
+      color: #718176;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    /* META */
+
+    .goal-box {
+      padding: 20px;
+    }
+
+    .goal-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .goal-title strong {
+      font-size: 16px;
+    }
+
+    .goal-percent {
+      color: #20e878;
+      font-weight: 800;
+    }
+
+    .progress {
+      width: 100%;
+      height: 11px;
+      background: #18251c;
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: #20e878;
+      border-radius: 99px;
+      transition: width .3s ease;
+    }
+
+    .goal-values {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 9px;
+      color: #819187;
+      font-size: 12px;
+    }
+
+    .goal-form {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: 1fr 120px;
+      gap: 9px;
+    }
+
+    .goal-form input {
+      width: 100%;
+      background: #08110b;
+      border: 1px solid #263c2d;
+      color: white;
+      border-radius: 10px;
+      padding: 11px;
+      outline: none;
+    }
+
+    .goal-form button {
+      border: none;
+      border-radius: 10px;
+      background: #17251b;
+      color: #d8e5db;
+      font-weight: 700;
+    }
+
+    /* HISTÓRICO */
+
+    .history-panel {
+      margin-top: 18px;
+    }
+
+    .filters {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      border: 1px solid #263c2d;
+      background: #09130d;
+      color: #84948a;
+      border-radius: 8px;
+      padding: 7px 10px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .filter-btn.active {
+      color: #07100b;
+      background: #20e878;
+      border-color: #20e878;
+    }
+
+    .bets-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .bet-card {
+      border: 1px solid #1b3022;
+      background: #09130d;
+      border-radius: 15px;
+      padding: 15px;
+    }
+
+    .bet-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .match {
+      font-size: 15px;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .league {
+      margin-top: 5px;
+      color: #728178;
+      font-size: 11px;
+    }
+
+    .result-badge {
+      border-radius: 8px;
+      padding: 5px 8px;
+      font-size: 10px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .badge-green {
+      background: rgba(32,232,120,.12);
+      color: #20e878;
+    }
+
+    .badge-red {
+      background: rgba(255,93,103,.12);
+      color: #ff5d67;
+    }
+
+    .badge-pending {
+      background: rgba(255,190,70,.10);
+      color: #ffbe46;
+    }
+
+    .bet-info {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .bet-info-item {
+      background: #0c1810;
+      border-radius: 9px;
+      padding: 9px;
+    }
+
+    .bet-info-item small {
+      display: block;
+      color: #68776e;
+      font-size: 10px;
+      margin-bottom: 3px;
+    }
+
+    .bet-info-item strong {
+      font-size: 12px;
+    }
+
+    .profit-line {
+      margin-top: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+    }
+
+    .profit-value {
+      font-weight: 900;
+    }
+
+    .pending-actions {
+      display: flex;
+      gap: 7px;
+      margin-top: 13px;
+    }
+
+    .result-btn {
+      flex: 1;
+      border: none;
+      border-radius: 9px;
+      padding: 9px;
+      font-weight: 800;
+      font-size: 11px;
+    }
+
+    .green-btn {
+      background: rgba(32,232,120,.14);
+      color: #20e878;
+      border: 1px solid rgba(32,232,120,.25);
+    }
+
+    .red-btn {
+      background: rgba(255,93,103,.12);
+      color: #ff5d67;
+      border: 1px solid rgba(255,93,103,.22);
+    }
+
+    .empty {
+      text-align: center;
+      padding: 35px 15px;
+      color: #69776e;
+      font-size: 13px;
+    }
+
+    /* TOAST */
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 20px;
+      transform: translateX(-50%) translateY(100px);
+      background: #20e878;
+      color: #041008;
+      padding: 12px 17px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 800;
+      z-index: 100;
+      opacity: 0;
+      transition: .3s;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* RESPONSIVO */
+
+    @media (max-width: 850px) {
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+
+    }
+
+    @media (max-width: 560px) {
+
+      .container {
+        padding: 20px 12px 40px;
+      }
+
+      .topbar-inner {
+        padding: 13px 12px;
+      }
+
+      .user-name {
+        display: none;
+      }
+
+      .welcome h2 {
+        font-size: 23px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .full {
+        grid-column: auto;
+      }
+
+      .bet-info {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .goal-form {
+        grid-template-columns: 1fr;
+      }
+
+      .panel-header {
+        padding: 16px;
+      }
+
+      .panel-body {
+        padding: 16px;
+      }
+
+    }
+  </style>
+    </head>
+
+  <body>
+
+    <!-- =========================
+         LOGIN
+    ========================= -->
+
+    <section id="loginScreen" class="auth-screen">
+
+      <div class="auth-card">
+
+        <div class="logo">
+          <h1>AxioN<span>!</span> Tips</h1>
+          <p>Controle suas apostas. Acompanhe sua evolução.</p>
+        </div>
+
+        <h2>Entrar</h2>
+
+        <div class="field">
+          <label>Email</label>
+          <input
+            type="email"
+            id="loginEmail"
+            placeholder="seu@email.com"
+          >
+        </div>
+
+        <div class="field">
+          <label>Senha</label>
+          <input
+            type="password"
+            id="loginPassword"
+            placeholder="Sua senha"
+          >
+        </div>
+
+        <button
+          class="primary-btn"
+          onclick="login()"
+        >
+          ENTRAR
+        </button>
+
+        <button
+          class="secondary-btn"
+          onclick="showRegister()"
+        >
+          Criar conta
+        </button>
+
+        <div
+          id="loginMessage"
+          class="auth-message"
+        ></div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         CADASTRO
+    ========================= -->
+
+    <section
+      id="registerScreen"
+      class="auth-screen hidden"
+    >
+
+      <div class="auth-card">
+
+        <div class="logo">
+          <h1>AxioN<span>!</span> Tips</h1>
+          <p>Crie sua conta</p>
+        </div>
+
+        <h2>Cadastro</h2>
+
+        <div class="field">
+          <label>Apelido</label>
+          <input
+            type="text"
+            id="registerNickname"
+            placeholder="Como quer ser chamado?"
+          >
+        </div>
+
+        <div class="field">
+          <label>Email</label>
+          <input
+            type="email"
+            id="registerEmail"
+            placeholder="seu@email.com"
+          >
+        </div>
+
+        <div class="field">
+          <label>Senha</label>
+          <input
+            type="password"
+            id="registerPassword"
+            placeholder="Crie uma senha"
+          >
+        </div>
+
+        <button
+          class="primary-btn"
+          onclick="register()"
+        >
+          CRIAR CONTA
+        </button>
+
+        <button
+          class="secondary-btn"
+          onclick="showLogin()"
+        >
+          Voltar para login
+        </button>
+
+        <div
+          id="registerMessage"
+          class="auth-message"
+        ></div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         APP
+    ========================= -->
+
+    <section
+      id="appScreen"
+      class="app hidden"
+    >
+
+      <header class="topbar">
+
+        <div class="topbar-inner">
+
+          <div class="brand">
+            AxioN<span>!</span> Tips
+          </div>
+
+          <div class="user-area">
+
+            <span
+              id="userName"
+              class="user-name"
+            ></span>
+
+            <button
+              class="logout-btn"
+              onclick="logout()"
+            >
+              Sair
+            </button>
+
+          </div>
+
+        </div>
+
+      </header>
+
+
+      <main class="container">
+
+        <div class="welcome">
+
+          <h2>Dashboard</h2>
+
+          <p>
+            Seu desempenho em um só lugar.
+          </p>
+
+        </div>
+
+
+        <!-- =========================
+             ESTATÍSTICAS
+        ========================= -->
+
+        <div class="stats-grid">
+
+          <div class="stat-card">
+
+            <div class="stat-label">
+              Lucro
+            </div>
+
+            <div
+              id="statProfit"
+              class="stat-value"
+            >
+              R$ 0,00
+            </div>
+
+          </div>
+
+
+          <div class="stat-card">
+
+            <div class="stat-label">
+              Greens
+            </div>
+
+            <div
+              id="statGreens"
+              class="stat-value profit-positive"
+            >
+              0
+            </div>
+
+          </div>
+
+
+          <div class="stat-card">
+
+            <div class="stat-label">
+              Reds
+            </div>
+
+            <div
+              id="statReds"
+              class="stat-value profit-negative"
+            >
+              0
+            </div>
+
+          </div>
+
+
+          <div class="stat-card">
+
+            <div class="stat-label">
+              Acerto
+            </div>
+
+            <div
+              id="statHitRate"
+              class="stat-value"
+            >
+              0%
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- =========================
+             ÁREA PRINCIPAL
+        ========================= -->
+
+        <div class="main-grid">
+
+          <!-- =========================
+               NOVA APOSTA
+          ========================= -->
+
+          <section class="panel">
+
+            <div class="panel-header">
+
+              <h3>
+                Nova aposta
+              </h3>
+
+              <span>
+                Adicionar manualmente
+              </span>
+
+            </div>
+
+            <div class="panel-body">
+
+              <div class="form-info">
+
+                Os jogos e campeonatos serão
+                automatizados futuramente.
+                Por enquanto, preencha os dados
+                da aposta manualmente.
+
+              </div>
+
+
+              <div class="form-grid">
+
+                <div class="field full">
+
+                  <label>
+                    Campeonato
+                  </label>
+
+                  <input
+                    type="text"
+                    id="league"
+                    placeholder="Ex.: Brasileirão"
+                  >
+
+                </div>
+
+
+                <div class="field">
+
+                  <label>
+                    Data e hora
+                  </label>
+
+                  <input
+                    type="datetime-local"
+                    id="matchDate"
+                  >
+
+                </div>
+
+
+                <div class="field">
+
+                  <label>
+                    Mercado
+                  </label>
+
+                  <select id="market">
+
+                    <option value="Resultado Final">
+                      Resultado Final
+                    </option>
+
+                    <option value="Dupla Chance">
+                      Dupla Chance
+                    </option>
+
+                    <option value="Mais de 1.5 Gols">
+                      Mais de 1.5 Gols
+                    </option>
+
+                    <option value="Mais de 2.5 Gols">
+                      Mais de 2.5 Gols
+                    </option>
+
+                    <option value="Menos de 3.5 Gols">
+                      Menos de 3.5 Gols
+                    </option>
+
+                    <option value="Ambas Marcam">
+                      Ambas Marcam
+                    </option>
+
+                    <option value="Escanteios">
+                      Escanteios
+                    </option>
+
+                    <option value="Outro">
+                      Outro
+                    </option>
+
+                  </select>
+
+                </div>
+
+
+                <div class="field">
+
+                  <label>
+                    Time da casa
+                  </label>
+
+                  <input
+                    type="text"
+                    id="homeTeam"
+                    placeholder="Ex.: Flamengo"
+                  >
+
+                </div>
+
+
+                <div class="field">
+
+                  <label>
+                    Time visitante
+                  </label>
+
+                  <input
+                    type="text"
+                    id="awayTeam"
+                    placeholder="Ex.: Vasco"
+                  >
+
+                </div>
+
+
+                <div class="field">
+
+                  <label>
+                    Palpite
+                  </label>
+
+                  <input
+                    type="text"
+                    id="selection"
+                    placeholder="Ex.: Flamengo vence"
+                  >
+
+                </div>
+
+
+                <div class="field">
+
+                  <label>
+                    Odd
+                  </label>
+
+                  <input
+                    type="number"
+                    id="odds"
+                    step="0.01"
+                    min="1"
+                    placeholder="1.80"
+                  >
+
+                </div>
+
+
+                <div class="field">
+
+                  <label>
+                    Valor da aposta
+                  </label>
+
+                  <input
+                    type="number"
+                    id="stake"
+                    step="0.01"
+                    min="0"
+                    placeholder="20.00"
+                  >
+
+                </div>
+
+
+                <div class="field full">
+
+                  <label>
+                    Observação
+                  </label>
+
+                  <textarea
+                    id="notes"
+                    placeholder="Observação opcional..."
+                  ></textarea>
+
+                </div>
+
+
+                <div class="full">
+
+                  <button
+                    class="save-bet"
+                    onclick="addBet()"
+                  >
+                    + ADICIONAR APOSTA
+                  </button>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </section>
+
+
+          <!-- =========================
+               META MENSAL
+          ========================= -->
+
+          <section class="panel">
+
+            <div class="panel-header">
+
+              <h3>
+                Meta mensal
+              </h3>
+
+              <span>
+                Seu progresso
+              </span>
+
+            </div>
+
+            <div class="goal-box">
+
+              <div class="goal-title">
+
+                <strong id="goalName">
+                  Sem meta definida
+                </strong>
+
+                <span
+                  id="goalPercent"
+                  class="goal-percent"
+                >
+                  0%
+                </span>
+
+              </div>
+
+
+              <div class="progress">
+
+                <div
+                  id="goalProgress"
+                  class="progress-bar"
+                ></div>
+
+              </div>
+
+
+              <div class="goal-values">
+
+                <span id="goalCurrent">
+                  R$ 0,00
+                </span>
+
+                <span id="goalTarget">
+                  R$ 0,00
+                </span>
+
+              </div>
+
+
+              <div class="goal-form">
+
+                <input
+                  type="text"
+                  id="goalInputName"
+                  placeholder="Nome da meta"
+                >
+
+                <input
+                  type="number"
+                  id="goalInputTarget"
+                  step="0.01"
+                  min="1"
+                  placeholder="100"
+                >
+
+                <button
+                  onclick="saveGoal()"
+                >
+                  SALVAR META
+                </button>
+
+              </div>
+
+            </div>
+
+          </section>
+
+        </div>
+                <!-- =========================
+             HISTÓRICO
+        ========================= -->
+
+        <section class="panel history-panel">
+
+          <div class="panel-header">
+
+            <h3>
+              Histórico de apostas
+            </h3>
+
+            <div class="filters">
+
+              <button
+                class="filter-btn active"
+                id="filterAll"
+                onclick="setFilter('ALL')"
+              >
+                TODAS
+              </button>
+
+              <button
+                class="filter-btn"
+                id="filterPending"
+                onclick="setFilter('PENDING')"
+              >
+                PENDENTES
+              </button>
+
+              <button
+                class="filter-btn"
+                id="filterGreen"
+                onclick="setFilter('GREEN')"
+              >
+                GREENS
+              </button>
+
+              <button
+                class="filter-btn"
+                id="filterRed"
+                onclick="setFilter('RED')"
+              >
+                REDS
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <div class="panel-body">
+
+            <div
+              id="betsList"
+              class="bets-list"
+            ></div>
+
+          </div>
+
+        </section>
+
+
+      </main>
+
+    </section>
+
+
+    <!-- =========================
+         NOTIFICAÇÃO
+    ========================= -->
+
+    <div
+      id="toast"
+      class="toast"
+    ></div>
+
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================= -->
+
+    <script>
+
+      /* =====================================================
+         SUPABASE
+      ===================================================== */
+
+      const SUPABASE_URL =
+        "https://lvdknawajdktnfuzlllp.supabase.co";
+
+      const SUPABASE_KEY =
+        "sb_publishable_Mb_5x7t0UFvzbd-Tup9E_w_lDflmVbM";
+
+      const supabaseClient =
+        window.supabase.createClient(
+          SUPABASE_URL,
+          SUPABASE_KEY
+        );
+
+
+      /* =====================================================
+         VARIÁVEIS
+      ===================================================== */
+
+      let currentUser = null;
+
+      let bets = [];
+
+      let currentFilter = "ALL";
+
+
+      /* =====================================================
+         UTILITÁRIOS
+      ===================================================== */
+
+      function money(value) {
+
+        return Number(
+          value || 0
+        ).toLocaleString(
+          "pt-BR",
+          {
+            style: "currency",
+            currency: "BRL"
+          }
+        );
+
+      }
+
+
+      function escapeHtml(value) {
+
+        if (
+          value === null ||
+          value === undefined
+        ) {
+          return "";
+        }
+
+        return String(value)
+          .replace(
+            /&/g,
+            "&amp;"
+          )
+          .replace(
+            /</g,
+            "&lt;"
+          )
+          .replace(
+            />/g,
+            "&gt;"
+          )
+          .replace(
+            /"/g,
+            "&quot;"
+          )
+          .replace(
+            /'/g,
+            "&#039;"
+          );
+
+      }
+
+
+      function showToast(message) {
+
+        const toast =
+          document.getElementById(
+            "toast"
+          );
+
+        toast.textContent =
+          message;
+
+        toast.classList.add(
+          "show"
+        );
+
+        setTimeout(() => {
+
+          toast.classList.remove(
+            "show"
+          );
+
+        }, 2500);
+
+      }
+
+
+      function showLoginMessage(message) {
+
+        document.getElementById(
+          "loginMessage"
+        ).textContent =
+          message;
+
+      }
+
+
+      function showRegisterMessage(message) {
+
+        document.getElementById(
+          "registerMessage"
+        ).textContent =
+          message;
+
+      }
+
+
+      /* =====================================================
+         TELAS
+      ===================================================== */
+
+      function showLogin() {
+
+        document
+          .getElementById(
+            "loginScreen"
+          )
+          .classList.remove(
+            "hidden"
+          );
+
+        document
+          .getElementById(
+            "registerScreen"
+          )
+          .classList.add(
+            "hidden"
+          );
+
+        document
+          .getElementById(
+            "appScreen"
+          )
+          .classList.add(
+            "hidden"
+          );
+
+      }
+
+
+      function showRegister() {
+
+        document
+          .getElementById(
+            "loginScreen"
+          )
+          .classList.add(
+            "hidden"
+          );
+
+        document
+          .getElementById(
+            "registerScreen"
+          )
+          .classList.remove(
+            "hidden"
+          );
+
+        document
+          .getElementById(
+            "appScreen"
+          )
+          .classList.add(
+            "hidden"
+          );
+
+      }
+
+
+      function showApp() {
+
+        document
+          .getElementById(
+            "loginScreen"
+          )
+          .classList.add(
+            "hidden"
+          );
+
+        document
+          .getElementById(
+            "registerScreen"
+          )
+          .classList.add(
+            "hidden"
+          );
+
+        document
+          .getElementById(
+            "appScreen"
+          )
+          .classList.remove(
+            "hidden"
+          );
+
+      }
+
+
+      /* =====================================================
+         CADASTRO
+      ===================================================== */
+
+      async function register() {
+
+        const nickname =
+          document
+            .getElementById(
+              "registerNickname"
+            )
+            .value
+            .trim();
+
+        const email =
+          document
+            .getElementById(
+              "registerEmail"
+            )
+            .value
+            .trim();
+
+        const password =
+          document
+            .getElementById(
+              "registerPassword"
+            )
+            .value;
+
+
+        if (
+          !nickname ||
+          !email ||
+          !password
+        ) {
+
+          showRegisterMessage(
+            "Preencha todos os campos."
+          );
+
+          return;
+
+        }
+
+
+        if (
+          password.length < 6
+        ) {
+
+          showRegisterMessage(
+            "A senha precisa ter pelo menos 6 caracteres."
+          );
+
+          return;
+
+        }
+
+
+        showRegisterMessage(
+          "Criando sua conta..."
+        );
+
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient
+            .auth
+            .signUp({
+
+              email,
+              password,
+
+              options: {
+
+                data: {
+                  nickname
+                }
+
+              }
+
+            });
+
+
+        if (error) {
+
+          showRegisterMessage(
+            error.message
+          );
+
+          return;
+
+        }
+
+
+        if (data.session) {
+
+          currentUser =
+            data.user;
+
+          showApp();
+
+          await loadApp();
+
+          showToast(
+            "Conta criada com sucesso!"
+          );
+
+          return;
+
+        }
+
+
+        showRegisterMessage(
+          "Conta criada! Agora faça login."
+        );
+
+        showLogin();
+
+      }
+
+
+      /* =====================================================
+         LOGIN
+      ===================================================== */
+
+      async function login() {
+
+        const email =
+          document
+            .getElementById(
+              "loginEmail"
+            )
+            .value
+            .trim();
+
+        const password =
+          document
+            .getElementById(
+              "loginPassword"
+            )
+            .value;
+
+
+        if (
+          !email ||
+          !password
+        ) {
+
+          showLoginMessage(
+            "Digite email e senha."
+          );
+
+          return;
+
+        }
+
+
+        showLoginMessage(
+          "Entrando..."
+        );
+
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient
+            .auth
+            .signInWithPassword({
+
+              email,
+              password
+
+            });
+
+
+        if (error) {
+
+          showLoginMessage(
+            error.message
+          );
+
+          return;
+
+        }
+
+
+        currentUser =
+          data.user;
+
+        showApp();
+
+        await loadApp();
+
+        showToast(
+          "Login realizado!"
+        );
+
+      }
+
+
+      /* =====================================================
+         LOGOUT
+      ===================================================== */
+
+      async function logout() {
+
+        await supabaseClient
+          .auth
+          .signOut();
+
+        currentUser =
+          null;
+
+        bets = [];
+
+        showLogin();
+
+      }
+
+
+      /* =====================================================
+         PERFIL
+      ===================================================== */
+
+      async function loadProfile() {
+
+        if (!currentUser) {
+          return;
+        }
+
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient
+            .from("profiles")
+            .select("nickname")
+            .eq(
+              "id",
+              currentUser.id
+            )
+            .maybeSingle();
+
+
+        if (
+          !error &&
+          data
+        ) {
+
+          document.getElementById(
+            "userName"
+          ).textContent =
+            data.nickname;
+
+        }
+
+      }
+
+
+      /* =====================================================
+         CARREGAR APOSTAS
+      ===================================================== */
+
+      async function loadBets() {
+
+        if (!currentUser) {
+          return;
+        }
+
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient
+            .from("bets")
+            .select("*")
+            .eq(
+              "user_id",
+              currentUser.id
+            )
+            .order(
+              "created_at",
+              {
+                ascending: false
+              }
+            );
+
+
+        if (error) {
+
+          console.error(error);
+
+          return;
+
+        }
+
+
+        bets =
+          data || [];
+
+        renderBets();
+
+        updateStats();
+
+        updateGoalProgress();
+
+      }
+
+
+      /* =====================================================
+         FILTROS
+      =====================================================
+      /* =====================================================
+         DEFINIR RESULTADO
+      ===================================================== */
+
+      async function setResult(
+        id,
+        result
+      ) {
+
+        const bet =
+          bets.find(
+            item =>
+              Number(item.id) ===
+              Number(id)
+          );
+
+
+        if (!bet) {
+          return;
+        }
+
+
+        const stake =
+          Number(
+            bet.stake || 0
+          );
+
+        const odds =
+          Number(
+            bet.odds || 0
+          );
+
+
+        let profit = 0;
+
+
+        if (
+          result === "GREEN"
+        ) {
+
+          profit =
+            stake *
+            (odds - 1);
+
+        }
+
+
+        if (
+          result === "RED"
+        ) {
+
+          profit =
+            -stake;
+
+        }
+
+
+        const {
+          error
+        } =
+          await supabaseClient
+            .from("bets")
+            .update({
+
+              result,
+              profit
+
+            })
+            .eq(
+              "id",
+              id
+            )
+            .eq(
+              "user_id",
+              currentUser.id
+            );
+
+
+        if (error) {
+
+          console.error(error);
+
+          showToast(
+            "Erro ao atualizar aposta."
+          );
+
+          return;
+
+        }
+
+
+        showToast(
+          result === "GREEN"
+            ? "Aposta marcada como GREEN!"
+            : "Aposta marcada como RED."
+        );
+
+
+        await loadBets();
+
+        await loadGoal();
+
+      }
+
+
+      /* =====================================================
+         ESTATÍSTICAS
+      ===================================================== */
+
+      function updateStats() {
+
+        let totalProfit = 0;
+
+        let greens = 0;
+
+        let reds = 0;
+
+
+        bets.forEach(
+          bet => {
+
+            totalProfit +=
+              Number(
+                bet.profit || 0
+              );
+
+
+            if (
+              bet.result ===
+              "GREEN"
+            ) {
+
+              greens++;
+
+            }
+
+
+            if (
+              bet.result ===
+              "RED"
+            ) {
+
+              reds++;
+
+            }
+
+          }
+        );
+
+
+        const totalFinished =
+          greens + reds;
+
+
+        let hitRate = 0;
+
+
+        if (
+          totalFinished > 0
+        ) {
+
+          hitRate =
+            (
+              greens /
+              totalFinished
+            ) *
+            100;
+
+        }
+
+
+        const profitElement =
+          document.getElementById(
+            "statProfit"
+          );
+
+
+        const greensElement =
+          document.getElementById(
+            "statGreens"
+          );
+
+
+        const redsElement =
+          document.getElementById(
+            "statReds"
+          );
+
+
+        const hitRateElement =
+          document.getElementById(
+            "statHitRate"
+          );
+
+
+        if (
+          profitElement
+        ) {
+
+          profitElement.textContent =
+            money(
+              totalProfit
+            );
+
+        }
+
+
+        if (
+          greensElement
+        ) {
+
+          greensElement.textContent =
+            greens;
+
+        }
+
+
+        if (
+          redsElement
+        ) {
+
+          redsElement.textContent =
+            reds;
+
+        }
+
+
+        if (
+          hitRateElement
+        ) {
+
+          hitRateElement.textContent =
+            hitRate.toFixed(
+              1
+            ) + "%";
+
+        }
+
+      }
+
+
+      /* =====================================================
+         META MENSAL
+      ===================================================== */
+
+      async function saveGoal() {
+
+        if (!currentUser) {
+          return;
+        }
+
+
+        const name =
+          document
+            .getElementById(
+              "goalName"
+            )
+            .value
+            .trim();
+
+
+        const target =
+          Number(
+            document
+              .getElementById(
+                "goalTarget"
+              )
+              .value
+          );
+
+
+        if (
+          !name ||
+          !target ||
+          target <= 0
+        ) {
+
+          showToast(
+            "Preencha a meta corretamente."
+          );
+
+          return;
+
+        }
+
+
+        const {
+          data: existingGoal,
+          error: findError
+        } =
+          await supabaseClient
+            .from("goals")
+            .select("id")
+            .eq(
+              "user_id",
+              currentUser.id
+            )
+            .limit(1)
+            .maybeSingle();
+
+
+        if (findError) {
+
+          console.error(
+            findError
+          );
+
+          showToast(
+            "Erro ao carregar a meta."
+          );
+
+          return;
+
+        }
+
+
+        let error;
+
+
+        if (existingGoal) {
+
+          const response =
+            await supabaseClient
+              .from("goals")
+              .update({
+
+                name,
+                target
+
+              })
+              .eq(
+                "id",
+                existingGoal.id
+              )
+              .eq(
+                "user_id",
+                currentUser.id
+              );
+
+          error =
+            response.error;
+
+        } else {
+
+          const response =
+            await supabaseClient
+              .from("goals")
+              .insert({
+
+                user_id:
+                  currentUser.id,
+
+                name,
+
+                target,
+
+                current_value:
+                  0
+
+              });
+
+          error =
+            response.error;
+
+        }
+
+
+        if (error) {
+
+          console.error(error);
+
+          showToast(
+            "Erro ao salvar meta."
+          );
+
+          return;
+
+        }
+
+
+        showToast(
+          "Meta salva!"
+        );
+
+
+        await loadGoal();
+
+      }
+
+
+      async function loadGoal() {
+
+        if (!currentUser) {
+          return;
+        }
+
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient
+            .from("goals")
+            .select("*")
+            .eq(
+              "user_id",
+              currentUser.id
+            )
+            .order(
+              "created_at",
+              {
+                ascending: false
+              }
+            )
+            .limit(1)
+            .maybeSingle();
+
+
+        if (error) {
+
+          console.error(error);
+
+          return;
+
+        }
+
+
+        if (!data) {
+
+          updateGoalProgress(
+            null
+          );
+
+          return;
+
+        }
+
+
+        const totalProfit =
+          bets.reduce(
+            (
+              total,
+              bet
+            ) =>
+              total +
+              Number(
+                bet.profit || 0
+              ),
+            0
+          );
+
+
+        await supabaseClient
+          .from("goals")
+          .update({
+
+            current_value:
+              totalProfit
+
+          })
+          .eq(
+            "id",
+            data.id
+          )
+          .eq(
+            "user_id",
+            currentUser.id
+          );
+
+
+        data.current_value =
+          totalProfit;
+
+
+        updateGoalProgress(
+          data
+        );
+
+      }
+
+
+      function updateGoalProgress(
+        goal
+      ) {
+
+        const goalName =
+          document.getElementById(
+            "goalName"
+          );
+
+
+        const goalTarget =
+          document.getElementById(
+            "goalTarget"
+          );
+
+
+        const goalCurrent =
+          document.getElementById(
+            "goalCurrent"
+          );
+
+
+        const goalPercent =
+          document.getElementById(
+            "goalPercent"
+          );
+
+
+        const goalBar =
+          document.getElementById(
+            "goalBar"
+          );
+
+
+        if (!goal) {
+
+          if (goalName) {
+            goalName.value = "";
+          }
+
+          if (goalTarget) {
+            goalTarget.value = "";
+          }
+
+          if (goalCurrent) {
+            goalCurrent.textContent =
+              money(0);
+          }
+
+          if (goalPercent) {
+            goalPercent.textContent =
+              "0%";
+          }
+
+          if (goalBar) {
+            goalBar.style.width =
+              "0%";
+          }
+
+          return;
+
+        }
+
+
+        if (goalName) {
+
+          goalName.value =
+            goal.name || "";
+
+        }
+
+
+        if (goalTarget) {
+
+          goalTarget.value =
+            goal.target || "";
+
+        }
+
+
+        const current =
+          Number(
+            goal.current_value || 0
+          );
+
+
+        const target =
+          Number(
+            goal.target || 0
+          );
+
+
+        let percent = 0;
+
+
+        if (
+          target > 0
+        ) {
+
+          percent =
+            (
+              current /
+              target
+            ) *
+            100;
+
+        }
+
+
+        if (
+          percent < 0
+        ) {
+
+          percent = 0;
+
+        }
+
+
+        if (
+          percent > 100
+        ) {
+
+          percent = 100;
+
+        }
+
+
+        if (goalCurrent) {
+
+          goalCurrent.textContent =
+            money(
+              current
+            );
+
+        }
+
+
+        if (goalPercent) {
+
+          goalPercent.textContent =
+            Math.round(
+              percent
+            ) + "%";
+
+        }
+
+
+        if (goalBar) {
+
+          goalBar.style.width =
+            percent + "%";
+
+        }
+
+      }
+
+
+      /* =====================================================
+         LIMPAR FORMULÁRIO
+      ===================================================== */
+
+      function clearBetForm() {
+
+        const fields = [
+
+          "league",
+
+          "matchDate",
+
+          "homeTeam",
+
+          "awayTeam",
+
+          "market",
+
+          "selection",
+
+          "odds",
+
+          "stake",
+
+          "notes"
+
+        ];
+
+
+        fields.forEach(
+          id => {
+
+            const element =
+              document.getElementById(
+                id
+              );
+
+            if (element) {
+
+              element.value = "";
+
+            }
+
+          }
+        );
+
+      }
+
+
+      /* =====================================================
+         ADICIONAR APOSTA
+      ===================================================== */
+
+      async function addBet() {
+
+        if (!currentUser) {
+
+          showToast(
+            "Faça login primeiro."
+          );
+
+          return;
+
+        }
+
+
+        const league =
+          document
+            .getElementById(
+              "league"
+            )
+            .value
+            .trim();
+
+
+        const matchDate =
+          document
+            .getElementById(
+              "matchDate"
+            )
+            .value;
+
+
+        const homeTeam =
+          document
+            .getElementById(
+              "homeTeam"
+            )
+            .value
+            .trim();
+
+
+        const awayTeam =
+          document
+            .getElementById(
+              "awayTeam"
+            )
+            .value
+            .trim();
+
+
+        const market =
+          document
+            .getElementById(
+              "market"
+            )
+            .value
+            .trim();
+
+
+        const selection =
+          document
+            .getElementById(
+              "selection"
+            )
+            .value
+            .trim();
+
+
+        const odds =
+          Number(
+            document
+              .getElementById(
+                "odds"
+              )
+              .value
+          );
+
+
+        const stake =
+          Number(
+            document
+              .getElementById(
+                "stake"
+              )
+              .value
+          );
+
+
+        const notes =
+          document
+            .getElementById(
+              "notes"
+            )
+            .value
+            .trim();
+
+
+        if (
+          !homeTeam ||
+          !awayTeam ||
+          !market ||
+          !selection ||
+          !odds ||
+          !stake
+        ) {
+
+          showToast(
+            "Preencha os campos obrigatórios."
+          );
+
+          return;
+
+        }
+
+
+        if (
+          odds <= 1
+        ) {
+
+          showToast(
+            "A odd precisa ser maior que 1."
+          );
+
+          return;
+
+        }
+
+
+        if (
+          stake <= 0
+        ) {
+
+          showToast(
+            "O valor da aposta precisa ser maior que 0."
+          );
+
+          return;
+
+        }
+
+
+        const {
+          error
+        } =
+          await supabaseClient
+            .from("bets")
+            .insert({
+
+              user_id:
+                currentUser.id,
+
+              league:
+                league || null,
+
+              home_team:
+                homeTeam,
+
+              away_team:
+                awayTeam,
+
+              match_date:
+                matchDate
+                  ? new Date(
+                      matchDate
+                    ).toISOString()
+                  : null,
+
+              market,
+
+              selection,
+
+              odds,
+
+              stake,
+
+              result:
+                "PENDING",
+
+              profit:
+                0,
+
+              notes:
+                notes || null
+
+            });
+
+
+        if (error) {
+
+          console.error(error);
+
+          showToast(
+            "Erro ao adicionar aposta."
+          );
+
+          return;
+
+        }
+
+
+        clearBetForm();
+
+        showToast(
+          "Aposta adicionada!"
+        );
+
+
+        await loadBets();
+
+        await loadGoal();
+
+      }
+
+
+      /* =====================================================
+         CARREGAR APLICAÇÃO
+      ===================================================== */
+
+      async function loadApp() {
+
+        if (!currentUser) {
+          return;
+        }
+
+
+        await loadProfile();
+
+        await loadBets();
+
+        await loadGoal();
+
+      }
+
+
+      /* =====================================================
+         AUTENTICAÇÃO
+      ===================================================== */
+
+      supabaseClient
+        .auth
+        .onAuthStateChange(
+          async (
+            event,
+            session
+          ) => {
+
+            if (
+              session &&
+              session.user
+            ) {
+
+              currentUser =
+                session.user;
+
+              showApp();
+
+              await loadApp();
+
+            } else {
+
+              currentUser =
+                null;
+
+              bets = [];
+
+              showLogin();
+
+            }
+
+          }
+        );
+
+
+      /* =====================================================
+         INICIALIZAÇÃO
+      ===================================================== */
+
+      async function start() {
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient
+            .auth
+            .getSession();
+
+
+        if (error) {
+
+          console.error(
+            error
+          );
+
+          showLogin();
+
+          return;
+
+        }
+
+
+        if (
+          data.session &&
+          data.session.user
+        ) {
+
+          currentUser =
+            data.session.user;
+
+          showApp();
+
+          await loadApp();
+
+        } else {
+
+          showLogin();
+
+        }
+
+      }
+
+
+      start();
+
+    </script>
+
+  </body>
+
+</html>

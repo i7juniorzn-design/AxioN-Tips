@@ -1,0 +1,1776 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AxioN! Tips</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  background:#0b0f14;
+  color:#fff;
+  min-height:100vh;
+}
+
+.container{
+  width:100%;
+  max-width:1100px;
+  margin:auto;
+  padding:20px;
+}
+
+.logo{
+  text-align:center;
+  font-size:30px;
+  font-weight:bold;
+  margin:20px 0;
+}
+
+.logo span{
+  color:#00e676;
+}
+
+.card{
+  background:#121820;
+  border:1px solid #202a35;
+  border-radius:14px;
+  padding:20px;
+  margin-bottom:18px;
+}
+
+input,
+select,
+textarea,
+button{
+  width:100%;
+  padding:13px;
+  margin-top:8px;
+  margin-bottom:12px;
+  border-radius:9px;
+  border:1px solid #303b48;
+  font-size:15px;
+}
+
+input,
+select,
+textarea{
+  background:#0c1117;
+  color:white;
+}
+
+button{
+  background:#00e676;
+  color:#061009;
+  border:none;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+button.secondary{
+  background:#26313d;
+  color:white;
+}
+
+button.danger{
+  background:#ff5252;
+  color:white;
+}
+
+h2{
+  margin-bottom:15px;
+}
+
+.hidden{
+  display:none!important;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin-bottom:18px;
+}
+
+.stat{
+  background:#121820;
+  border:1px solid #202a35;
+  padding:15px;
+  border-radius:10px;
+  text-align:center;
+}
+
+.stat strong{
+  display:block;
+  font-size:23px;
+  margin-top:6px;
+}
+
+.green{
+  color:#00e676;
+}
+
+.red{
+  color:#ff5252;
+}
+
+.bet{
+  background:#0c1117;
+  border:1px solid #202a35;
+  border-radius:12px;
+  padding:15px;
+  margin-top:12px;
+}
+
+.bet-title{
+  font-size:18px;
+  font-weight:bold;
+  margin-bottom:10px;
+}
+
+.bet-info{
+  color:#b9c2cc;
+  line-height:1.7;
+}
+
+.actions{
+  display:flex;
+  gap:8px;
+  margin-top:10px;
+}
+
+.actions button{
+  margin:0;
+}
+
+.progress{
+  height:14px;
+  background:#252f39;
+  border-radius:20px;
+  overflow:hidden;
+  margin-top:10px;
+}
+
+.progress-bar{
+  height:100%;
+  background:#00e676;
+  width:0;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+}
+
+.error{
+  color:#ff5252;
+  margin-bottom:10px;
+}
+
+.success{
+  color:#00e676;
+  margin-bottom:10px;
+}
+
+@media(max-width:700px){
+
+  .stats{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .grid{
+    grid-template-columns:1fr;
+  }
+
+  .actions{
+    flex-direction:column;
+  }
+
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<section id="loginScreen">
+
+<div class="container">
+
+<div class="logo">
+AxioN<span>!</span> Tips
+</div>
+
+<div class="card">
+
+<h2>Entrar</h2>
+
+<div id="loginMsg"></div>
+
+<input
+id="loginEmail"
+type="email"
+placeholder="E-mail"
+>
+
+<input
+id="loginPassword"
+type="password"
+placeholder="Senha"
+>
+
+<button onclick="login()">
+Entrar
+</button>
+
+<button
+class="secondary"
+onclick="showRegister()"
+>
+Ainda não tenho conta
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- CADASTRO -->
+<section id="registerScreen" class="hidden">
+
+<div class="container">
+
+<div class="logo">
+AxioN<span>!</span> Tips
+</div>
+
+<div class="card">
+
+<h2>Criar conta</h2>
+
+<div id="registerMsg"></div>
+
+<input
+id="registerNickname"
+placeholder="Seu apelido"
+>
+
+<input
+id="registerEmail"
+type="email"
+placeholder="E-mail"
+>
+
+<input
+id="registerPassword"
+type="password"
+placeholder="Senha"
+>
+
+<button onclick="register()">
+Criar conta
+</button>
+
+<button
+class="secondary"
+onclick="showLogin()"
+>
+Já tenho conta
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- APLICATIVO -->
+<section id="appScreen" class="hidden">
+
+<div class="container">
+
+<div class="logo">
+AxioN<span>!</span> Tips
+</div>
+
+
+<!-- USUÁRIO -->
+<div class="card">
+
+<h2>
+Olá,
+<span id="nickname">Apostador</span>
+👋
+</h2>
+
+<button
+class="secondary"
+onclick="logout()"
+>
+Sair
+</button>
+
+</div>
+
+
+<!-- ESTATÍSTICAS -->
+<div class="stats">
+
+<div class="stat">
+Lucro
+<strong
+id="profit"
+class="green"
+>
+R$ 0,00
+</strong>
+</div>
+
+<div class="stat">
+Greens
+<strong id="greens">
+0
+</strong>
+</div>
+
+<div class="stat">
+Reds
+<strong id="reds">
+0
+</strong>
+</div>
+
+<div class="stat">
+Acerto
+<strong id="hitRate">
+0%
+</strong>
+</div>
+
+</div>
+
+
+<!-- NOVA APOSTA -->
+<div class="card">
+
+<h2>
+Nova aposta
+</h2>
+
+<div id="betMsg"></div>
+
+<div class="grid">
+
+<div>
+
+<label>Liga</label>
+
+<input
+id="betLeague"
+placeholder="Ex: Brasileirão"
+>
+
+</div>
+
+
+<div>
+
+<label>Data e hora</label>
+
+<input
+id="betDate"
+type="datetime-local"
+>
+
+</div>
+
+
+<div>
+
+<label>Time da casa</label>
+
+<input
+id="homeTeam"
+placeholder="Ex: Flamengo"
+>
+
+</div>
+
+
+<div>
+
+<label>Time visitante</label>
+
+<input
+id="awayTeam"
+placeholder="Ex: Palmeiras"
+>
+
+</div>
+
+
+<div>
+
+<label>Mercado</label>
+
+<select id="betMarket">
+
+<option>Resultado Final</option>
+
+<option>Dupla Chance</option>
+
+<option>Total de Gols</option>
+
+<option>Ambas Marcam</option>
+
+<option>Escanteios</option>
+
+<option>Cartões</option>
+
+<option>Outro</option>
+
+</select>
+
+</div>
+
+
+<div>
+
+<label>Palpite</label>
+
+<input
+id="betSelection"
+placeholder="Ex: Flamengo vence"
+>
+
+</div>
+
+
+<div>
+
+<label>Odd</label>
+
+<input
+id="betOdds"
+type="number"
+step="0.01"
+placeholder="1.50"
+>
+
+</div>
+
+
+<div>
+
+<label>Valor apostado</label>
+
+<input
+id="betStake"
+type="number"
+step="0.01"
+placeholder="10.00"
+>
+
+</div>
+
+</div>
+
+
+<label>Observações</label>
+
+<textarea
+id="betNotes"
+placeholder="Observações"
+></textarea>
+
+<button onclick="addBet()">
+Adicionar aposta
+</button>
+
+</div>
+
+
+<!-- META -->
+<div class="card">
+
+<h2>
+Meta mensal
+</h2>
+
+<input
+id="goalName"
+placeholder="Nome da meta"
+>
+
+<input
+id="goalTarget"
+type="number"
+step="0.01"
+placeholder="Valor da meta"
+>
+
+<button onclick="saveGoal()">
+Salvar meta
+</button>
+
+<div id="goalArea">
+Nenhuma meta cadastrada.
+</div>
+
+</div>
+
+
+<!-- HISTÓRICO -->
+<div class="card">
+
+<h2>
+Histórico de apostas
+</h2>
+
+<select
+id="filterResult"
+onchange="renderBets()"
+>
+
+<option value="ALL">
+Todas
+</option>
+
+<option value="PENDING">
+Pendentes
+</option>
+
+<option value="GREEN">
+Greens
+</option>
+
+<option value="RED">
+Reds
+</option>
+
+</select>
+
+<div id="betsList">
+Carregando...
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<script>
+
+/* =========================================
+   SUPABASE
+========================================= */
+
+const SUPABASE_URL =
+"https://lvdknawajdktnfuzlllp.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_Mb_5x7t0UFvzbd-Tup9E_w_lDflmVbM";
+
+
+const supabaseClient =
+window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+
+/* =========================================
+   VARIÁVEIS
+========================================= */
+
+let currentUser = null;
+
+let bets = [];
+
+let goal = null;
+
+
+/* =========================================
+   FUNÇÕES AUXILIARES
+========================================= */
+
+const $ = id =>
+document.getElementById(id);
+
+
+function money(value){
+
+return Number(value || 0)
+.toLocaleString(
+"pt-BR",
+{
+style:"currency",
+currency:"BRL"
+}
+);
+
+}
+
+
+function esc(value){
+
+return String(value ?? "")
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+
+}
+
+
+/* =========================================
+   TELAS
+========================================= */
+
+function showLogin(){
+
+$("loginScreen")
+.classList
+.remove("hidden");
+
+$("registerScreen")
+.classList
+.add("hidden");
+
+$("appScreen")
+.classList
+.add("hidden");
+
+}
+
+
+function showRegister(){
+
+$("loginScreen")
+.classList
+.add("hidden");
+
+$("registerScreen")
+.classList
+.remove("hidden");
+
+$("appScreen")
+.classList
+.add("hidden");
+
+}
+
+
+function showApp(){
+
+$("loginScreen")
+.classList
+.add("hidden");
+
+$("registerScreen")
+.classList
+.add("hidden");
+
+$("appScreen")
+.classList
+.remove("hidden");
+
+}
+
+
+/* =========================================
+   CADASTRO
+========================================= */
+
+async function register(){
+
+const nickname =
+$("registerNickname")
+.value
+.trim();
+
+const email =
+$("registerEmail")
+.value
+.trim();
+
+const password =
+$("registerPassword")
+.value;
+
+
+if(
+!nickname ||
+!email ||
+!password
+){
+
+$("registerMsg")
+.innerHTML =
+'<div class="error">Preencha todos os campos.</div>';
+
+return;
+
+}
+
+
+const {data,error} =
+await supabaseClient.auth.signUp({
+
+email:email,
+
+password:password,
+
+options:{
+data:{
+nickname:nickname
+}
+}
+
+});
+
+
+if(error){
+
+$("registerMsg")
+.innerHTML =
+'<div class="error">'
++
+esc(error.message)
++
+'</div>';
+
+return;
+
+}
+
+
+if(data.user){
+
+$("registerMsg")
+.innerHTML =
+'<div class="success">'
++
+"Conta criada com sucesso!"
++
+"</div>";
+
+}
+
+}
+
+
+/* =========================================
+   LOGIN
+========================================= */
+
+async function login(){
+
+const email =
+$("loginEmail")
+.value
+.trim();
+
+const password =
+$("loginPassword")
+.value;
+
+
+if(
+!email ||
+!password
+){
+
+$("loginMsg")
+.innerHTML =
+'<div class="error">'
++
+"Digite e-mail e senha."
++
+"</div>";
+
+return;
+
+}
+
+
+const {data,error} =
+await supabaseClient.auth.signInWithPassword({
+
+email:email,
+
+password:password
+
+});
+
+
+if(error){
+
+$("loginMsg")
+.innerHTML =
+'<div class="error">'
++
+esc(error.message)
++
+"</div>";
+
+return;
+
+}
+
+
+currentUser =
+data.user;
+
+
+await loadApp();
+
+}
+
+
+/* =========================================
+   LOGOUT
+========================================= */
+
+async function logout(){
+
+await supabaseClient.auth.signOut();
+
+currentUser = null;
+
+bets = [];
+
+goal = null;
+
+showLogin();
+
+}
+
+
+/* =========================================
+   CARREGAR APP
+========================================= */
+
+async function loadApp(){
+
+if(!currentUser){
+
+return;
+
+}
+
+showApp();
+
+await loadProfile();
+
+await loadBets();
+
+await loadGoal();
+
+}
+
+
+/* =========================================
+   PERFIL
+========================================= */
+
+async function loadProfile(){
+
+const {data,error} =
+await supabaseClient
+.from("profiles")
+.select("nickname")
+.eq(
+"id",
+currentUser.id
+)
+.maybeSingle();
+
+
+if(
+!error &&
+data
+){
+
+$("nickname")
+.textContent =
+data.nickname;
+
+}
+
+}
+
+
+/* =========================================
+   ADICIONAR APOSTA
+========================================= */
+
+async function addBet(){
+
+const league =
+$("betLeague")
+.value
+.trim();
+
+
+const date =
+$("betDate")
+.value;
+
+
+const home =
+$("homeTeam")
+.value
+.trim();
+
+
+const away =
+$("awayTeam")
+.value
+.trim();
+
+
+const market =
+$("betMarket")
+.value;
+
+
+const selection =
+$("betSelection")
+.value
+.trim();
+
+
+const odds =
+Number(
+$("betOdds")
+.value
+);
+
+
+const stake =
+Number(
+$("betStake")
+.value
+);
+
+
+const notes =
+$("betNotes")
+.value
+.trim();
+
+
+if(
+!home ||
+!away ||
+!selection ||
+!odds ||
+!stake
+){
+
+$("betMsg")
+.innerHTML =
+'<div class="error">'
++
+"Preencha os campos obrigatórios."
++
+"</div>";
+
+return;
+
+}
+
+
+const {error} =
+await supabaseClient
+.from("bets")
+.insert({
+
+user_id:
+currentUser.id,
+
+league:
+league || null,
+
+home_team:
+home,
+
+away_team:
+away,
+
+match_date:
+date
+?
+new Date(date).toISOString()
+:
+null,
+
+market:
+market,
+
+selection:
+selection,
+
+odds:
+odds,
+
+stake:
+stake,
+
+result:
+"PENDING",
+
+profit:
+0,
+
+notes:
+notes || null
+
+});
+
+
+if(error){
+
+$("betMsg")
+.innerHTML =
+'<div class="error">'
++
+esc(error.message)
++
+"</div>";
+
+return;
+
+}
+
+
+$("betMsg")
+.innerHTML =
+'<div class="success">'
++
+"Aposta adicionada!"
++
+"</div>";
+
+
+[
+"betLeague",
+"betDate",
+"homeTeam",
+"awayTeam",
+"betSelection",
+"betOdds",
+"betStake",
+"betNotes"
+]
+.forEach(
+id => $(id).value = ""
+);
+
+
+await loadBets();
+
+}
+
+
+/* =========================================
+   CARREGAR APOSTAS
+========================================= */
+
+async function loadBets(){
+
+const {data,error} =
+await supabaseClient
+.from("bets")
+.select("*")
+.eq(
+"user_id",
+currentUser.id
+)
+.order(
+"created_at",
+{
+ascending:false
+}
+);
+
+
+if(error){
+
+$("betsList")
+.innerHTML =
+'<div class="error">'
++
+esc(error.message)
++
+"</div>";
+
+return;
+
+}
+
+
+bets =
+data || [];
+
+
+renderBets();
+
+updateStats();
+
+}
+
+
+/* =========================================
+   MOSTRAR APOSTAS
+========================================= */
+
+function renderBets(){
+
+const filter =
+$("filterResult")
+.value;
+
+
+const list =
+bets.filter(
+b =>
+filter === "ALL"
+||
+b.result === filter
+);
+
+
+if(!list.length){
+
+$("betsList")
+.innerHTML =
+"<p>Nenhuma aposta encontrada.</p>";
+
+return;
+
+}
+
+
+$("betsList")
+.innerHTML =
+list
+.map(
+b => {
+
+const date =
+b.match_date
+?
+new Date(
+b.match_date
+)
+.toLocaleString(
+"pt-BR"
+)
+:
+"-";
+
+
+const cls =
+b.result === "GREEN"
+?
+"green"
+:
+b.result === "RED"
+?
+"red"
+:
+"";
+
+
+return `
+
+<div class="bet">
+
+<div class="bet-title">
+
+${esc(b.home_team)}
+x
+${esc(b.away_team)}
+
+</div>
+
+
+<div class="bet-info">
+
+<strong>Liga:</strong>
+${esc(b.league || "-")}
+<br>
+
+<strong>Data:</strong>
+${esc(date)}
+<br>
+
+<strong>Mercado:</strong>
+${esc(b.market)}
+<br>
+
+<strong>Palpite:</strong>
+${esc(b.selection)}
+<br>
+
+<strong>Odd:</strong>
+${esc(b.odds)}
+<br>
+
+<strong>Stake:</strong>
+${money(b.stake)}
+<br>
+
+<strong>Resultado:</strong>
+
+<span class="${cls}">
+${esc(b.result)}
+</span>
+
+<br>
+
+<strong>Lucro:</strong>
+${money(b.profit)}
+
+</div>
+
+
+${
+b.notes
+?
+`
+<p style="margin-top:10px">
+${esc(b.notes)}
+</p>
+`
+:
+""
+}
+
+
+${
+b.result === "PENDING"
+?
+`
+
+<div class="actions">
+
+<button
+onclick="setResult(${b.id},'GREEN')"
+>
+GREEN
+</button>
+
+<button
+class="danger"
+onclick="setResult(${b.id},'RED')"
+>
+RED
+</button>
+
+</div>
+
+`
+:
+""
+}
+
+</div>
+
+`;
+
+}
+)
+.join("");
+
+}
+
+
+/* =========================================
+   GREEN / RED
+========================================= */
+
+async function setResult(
+id,
+result
+){
+
+const bet =
+bets.find(
+b => b.id === id
+);
+
+
+if(!bet){
+
+return;
+
+}
+
+
+let profit = 0;
+
+
+if(result === "GREEN"){
+
+profit =
+Number(bet.stake)
+*
+(
+Number(bet.odds)
+-
+1
+);
+
+}
+else{
+
+profit =
+-Number(bet.stake);
+
+}
+
+
+const {error} =
+await supabaseClient
+.from("bets")
+.update({
+
+result:
+result,
+
+profit:
+profit
+
+})
+.eq(
+"id",
+id
+)
+.eq(
+"user_id",
+currentUser.id
+);
+
+
+if(error){
+
+alert(
+error.message
+);
+
+return;
+
+}
+
+
+await loadBets();
+
+await loadGoal();
+
+}
+
+
+/* =========================================
+   ESTATÍSTICAS
+========================================= */
+
+function updateStats(){
+
+let profit = 0;
+
+let greens = 0;
+
+let reds = 0;
+
+
+bets.forEach(
+b => {
+
+profit +=
+Number(
+b.profit || 0
+);
+
+
+if(
+b.result === "GREEN"
+){
+
+greens++;
+
+}
+
+
+if(
+b.result === "RED"
+){
+
+reds++;
+
+}
+
+}
+);
+
+
+const finished =
+greens + reds;
+
+
+const rate =
+finished
+?
+(
+greens /
+finished
+*
+100
+)
+:
+0;
+
+
+$("profit")
+.textContent =
+money(profit);
+
+
+$("profit")
+.className =
+profit >= 0
+?
+"green"
+:
+"red";
+
+
+$("greens")
+.textContent =
+greens;
+
+
+$("reds")
+.textContent =
+reds;
+
+
+$("hitRate")
+.textContent =
+rate.toFixed(1)
++
+"%";
+
+}
+
+
+/* =========================================
+   SALVAR META
+========================================= */
+
+async function saveGoal(){
+
+const name =
+$("goalName")
+.value
+.trim();
+
+
+const target =
+Number(
+$("goalTarget")
+.value
+);
+
+
+if(
+!name ||
+!target
+){
+
+alert(
+"Preencha nome e valor da meta."
+);
+
+return;
+
+}
+
+
+let error;
+
+
+if(goal){
+
+({
+error
+} =
+await supabaseClient
+.from("goals")
+.update({
+
+name:
+name,
+
+target:
+target
+
+})
+.eq(
+"id",
+goal.id
+)
+.eq(
+"user_id",
+currentUser.id
+));
+
+}
+else{
+
+({
+error
+} =
+await supabaseClient
+.from("goals")
+.insert({
+
+user_id:
+currentUser.id,
+
+name:
+name,
+
+target:
+target,
+
+current_value:
+0
+
+}));
+
+}
+
+
+if(error){
+
+alert(
+error.message
+);
+
+return;
+
+}
+
+
+await loadGoal();
+
+}
+
+
+/* =========================================
+   CARREGAR META
+========================================= */
+
+async function loadGoal(){
+
+const {data,error} =
+await supabaseClient
+.from("goals")
+.select("*")
+.eq(
+"user_id",
+currentUser.id
+)
+.order(
+"created_at",
+{
+ascending:false
+}
+)
+.limit(1)
+.maybeSingle();
+
+
+if(error){
+
+return;
+
+}
+
+
+goal =
+data;
+
+
+if(!goal){
+
+$("goalArea")
+.textContent =
+"Nenhuma meta cadastrada.";
+
+return;
+
+}
+
+
+$("goalName")
+.value =
+goal.name;
+
+
+$("goalTarget")
+.value =
+goal.target;
+
+
+const current =
+bets.reduce(
+(total,b) =>
+total +
+Number(
+b.profit || 0
+),
+0
+);
+
+
+const pct =
+Math.max(
+0,
+Math.min(
+100,
+current /
+Number(goal.target)
+*
+100
+)
+);
+
+
+$("goalArea")
+.innerHTML = `
+
+<p>
+<strong>
+${esc(goal.name)}
+</strong>
+</p>
+
+<p>
+${money(current)}
+/
+${money(goal.target)}
+</p>
+
+<div class="progress">
+
+<div
+class="progress-bar"
+style="width:${pct}%"
+></div>
+
+</div>
+
+<p style="margin-top:8px">
+${pct.toFixed(1)}%
+da meta
+</p>
+
+`;
+
+}
+
+
+/* =========================================
+   VERIFICAR LOGIN AUTOMATICAMENTE
+========================================= */
+
+supabaseClient
+.auth
+.onAuthStateChange(
+async (
+event,
+session
+) => {
+
+if(
+session &&
+session.user
+){
+
+currentUser =
+session.user;
+
+await loadApp();
+
+}
+else{
+
+currentUser =
+null;
+
+showLogin();
+
+}
+
+}
+);
+
+
+/* =========================================
+   INICIAR SITE
+========================================= */
+
+async function start(){
+
+const {data} =
+await supabaseClient
+.auth
+.getSession();
+
+
+if(
+data &&
+data.session &&
+data.session.user
+){
+
+currentUser =
+data.session.user;
+
+await loadApp();
+
+}
+else{
+
+showLogin();
+
+}
+
+}
+
+
+start();
+
+</script>
+
+</body>
+</html>

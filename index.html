@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080a0f">
+  <meta name="description" content="AxioN! Tips — painel de análise e acompanhamento de apostas esportivas">
+  <title>AxioN! Tips</title>
+
+  <link rel="stylesheet" href="css/style.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+
+  <div id="loginScreen" class="screen">
+    <div class="auth-container">
+      <div class="brand">
+        <span class="brand-axion">AxioN!</span>
+        <span class="brand-tips">Tips</span>
+      </div>
+
+      <div class="auth-card">
+        <h1>Entrar</h1>
+        <p>Acesse seu painel</p>
+
+        <form onsubmit="login(event)">
+          <div class="input-group">
+            <label for="loginEmail">E-mail</label>
+            <input
+              type="email"
+              id="loginEmail"
+              placeholder="seu@email.com"
+              autocomplete="email"
+              required
+            >
+          </div>
+
+          <div class="input-group">
+            <label for="loginPassword">Senha</label>
+            <input
+              type="password"
+              id="loginPassword"
+              placeholder="Sua senha"
+              autocomplete="current-password"
+              required
+            >
+          </div>
+
+          <button type="submit" class="btn-primary">
+            Entrar
+          </button>
+        </form>
+
+        <button type="button" class="auth-switch" onclick="showRegister()">
+          Criar uma conta
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="registerScreen" class="screen hidden">
+    <div class="auth-container">
+      <div class="brand">
+        <span class="brand-axion">AxioN!</span>
+        <span class="brand-tips">Tips</span>
+      </div>
+
+      <div class="auth-card">
+        <h1>Criar conta</h1>
+        <p>Comece a acompanhar seus resultados</p>
+
+        <form onsubmit="register(event)">
+          <div class="input-group">
+            <label for="registerNickname">Apelido</label>
+            <input
+              type="text"
+              id="registerNickname"
+              placeholder="Seu apelido"
+              autocomplete="nickname"
+              required
+            >
+          </div>
+
+          <div class="input-group">
+            <label for="registerEmail">E-mail</label>
+            <input
+              type="email"
+              id="registerEmail"
+              placeholder="seu@email.com"
+              autocomplete="email"
+              required
+            >
+          </div>
+
+          <div class="input-group">
+            <label for="registerPassword">Senha</label>
+            <input
+              type="password"
+              id="registerPassword"
+              placeholder="Mínimo de 6 caracteres"
+              autocomplete="new-password"
+              minlength="6"
+              required
+            >
+          </div>
+
+          <button type="submit" class="btn-primary">
+            Criar conta
+          </button>
+        </form>
+
+        <button type="button" class="auth-switch" onclick="showLogin()">
+          Já tenho uma conta
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="appScreen" class="hidden">
+
+    <header class="topbar" id="topbar">
+      <div class="topbar-logo">
+        <span class="brand-axion">AxioN!</span>
+        <span class="brand-tips">Tips</span>
+      </div>
+
+      <div class="topbar-user">
+        <span id="userNickname">Usuário</span>
+        <button type="button" class="btn-logout" onclick="logout()">
+          Sair
+        </button>
+      </div>
+    </header>
+
+    <main class="app-content">
+
+      <section id="homeSection" class="page-section">
+
+        <div class="hero">
+          <div>
+            <span class="section-label">PAINEL</span>
+            <h1>Olá, <span id="heroNickname">apostador</span></h1>
+            <p>Acompanhe seus palpites e resultados.</p>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-label">Lucro</span>
+            <strong id="profitValue">R$ 0,00</strong>
+          </div>
+
+          <div class="stat-card">
+            <span class="stat-label">Greens</span>
+            <strong id="greensValue">0</strong>
+          </div>
+
+          <div class="stat-card">
+            <span class="stat-label">Reds</span>
+            <strong id="redsValue">0</strong>
+          </div>
+
+          <div class="stat-card">
+            <span class="stat-label">Acerto</span>
+            <strong id="hitRateValue">0%</strong>
+          </div>
+        </div>
+
+      </section>
+
+      <section id="matchesSection" class="page-section">
+
+        <div class="section-header">
+          <div>
+            <span class="section-label">JOGOS</span>
+            <h2>Partidas</h2>
+          </div>
+
+          <span id="matchesCount" class="section-count">0 jogos</span>
+        </div>
+
+        <div class="date-tabs">
+          <button type="button" class="date-tab active" onclick="changeMatchDay(0)">
+            <span>Hoje</span>
+            <strong id="todayDate">--/--</strong>
+          </button>
+
+          <button type="button" class="date-tab" onclick="changeMatchDay(1)">
+            <span>Amanhã</span>
+            <strong id="tomorrowDate">--/--</strong>
+          </button>
+
+          <button type="button" class="date-tab" onclick="changeMatchDay(2)">
+            <span>Depois</span>
+            <strong id="dayAfterTomorrowDate">--/--</strong>
+          </button>
+
+          <button type="button" class="date-tab" onclick="changeMatchDay(3)">
+            <span>+3 dias</span>
+            <strong id="threeDaysDate">--/--</strong>
+          </button>
+        </div>
+
+        <div id="matchesList" class="matches-list">
+        </div>
+
+      </section>
+
+      <section id="matchAnalysis" class="page-section hidden">
+
+        <div class="analysis-header">
+          <button type="button" class="back-button" onclick="closeMatch()">
+            ← Voltar
+          </button>
+
+          <span class="section-label">ANÁLISE</span>
+        </div>
+
+        <div class="analysis-card">
+
+          <div class="analysis-match">
+            <span id="analysisLeague">Competição</span>
+            <span id="analysisTime">00:00</span>
+          </div>
+
+          <div class="teams">
+            <div class="team">
+              <strong id="analysisHome">Casa</strong>
+            </div>
+
+            <span class="vs">VS</span>
+
+            <div class="team">
+              <strong id="analysisAway">Fora</strong>
+            </div>
+          </div>
+
+          <div class="confidence">
+            <span>Confiança</span>
+            <strong id="analysisConfidence">0%</strong>
+          </div>
+
+          <div class="analysis-grid">
+
+            <div class="analysis-item">
+              <span>Mercado</span>
+              <strong id="analysisMarket">-</strong>
+            </div>
+
+            <div class="analysis-item">
+              <span>Palpite</span>
+              <strong id="analysisSelection">-</strong>
+            </div>
+
+            <div class="analysis-item">
+              <span>Odd</span>
+              <strong id="analysisOdds">0.00</strong>
+            </div>
+
+          </div>
+
+          <div class="input-group">
+            <label for="analysisStake">Valor da aposta</label>
+            <input
+              type="number"
+              id="analysisStake"
+              min="0"
+              step="0.01"
+              placeholder="R$ 0,00"
+              oninput="calculatePotentialReturn()"
+            >
+          </div>
+
+          <div class="potential-result">
+            <div>
+              <span>Retorno potencial</span>
+              <strong id="potentialReturn">R$ 0,00</strong>
+            </div>
+
+            <div>
+              <span>Lucro potencial</span>
+              <strong id="potentialProfit">R$ 0,00</strong>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="analysisNotes">Observação</label>
+            <textarea
+              id="analysisNotes"
+              placeholder="Adicione uma observação..."
+              rows="3"
+            ></textarea>
+          </div>
+
+          <button
+            type="button"
+            class="btn-primary"
+            onclick="confirmAnalysisBet()"
+          >
+            Confirmar aposta
+          </button>
+
+        </div>
+
+      </section>
+
+      <section id="betsSection" class="page-section">
+
+        <div class="section-header">
+          <div>
+            <span class="section-label">HISTÓRICO</span>
+            <h2>Minhas apostas</h2>
+          </div>
+        </div>
+
+        <div class="filter-tabs">
+          <button
+            type="button"
+            id="filterAll"
+            class="filter-tab active"
+            onclick="setFilter('ALL')"
+          >
+            Todas
+          </button>
+
+          <button
+            type="button"
+            id="filterPending"
+            class="filter-tab"
+            onclick="setFilter('PENDING')"
+          >
+            Pendentes
+          </button>
+
+          <button
+            type="button"
+            id="filterGreen"
+            class="filter-tab"
+            onclick="setFilter('GREEN')"
+          >
+            Greens
+          </button>
+
+          <button
+            type="button"
+            id="filterRed"
+            class="filter-tab"
+            onclick="setFilter('RED')"
+          >
+            Reds
+          </button>
+        </div>
+
+        <div id="betsList" class="bets-list">
+        </div>
+
+      </section>
+
+      <section id="bankSection" class="page-section">
+
+        <div class="section-header">
+          <div>
+            <span class="section-label">RESULTADOS</span>
+            <h2>Resumo</h2>
+          </div>
+        </div>
+
+        <div class="bank-card">
+
+          <div class="bank-main">
+            <span>Lucro acumulado</span>
+            <strong id="bankValue">R$ 0,00</strong>
+          </div>
+
+          <div class="bank-stats">
+            <div>
+              <span>Greens</span>
+              <strong id="bankGreens">0</strong>
+            </div>
+
+            <div>
+              <span>Reds</span>
+              <strong id="bankReds">0</strong>
+            </div>
+
+            <div>
+              <span>Acerto</span>
+              <strong id="bankHitRate">0%</strong>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+      <section id="goalSection" class="page-section">
+
+        <div class="section-header">
+          <div>
+            <span class="section-label">OBJETIVO</span>
+            <h2>Meta mensal</h2>
+          </div>
+
+          <button
+            type="button"
+            class="btn-secondary"
+            onclick="showGoalForm()"
+          >
+            Editar
+          </button>
+        </div>
+
+        <div class="goal-card">
+
+          <div class="goal-info">
+            <span id="goalDisplayName">Minha meta</span>
+            <strong id="goalPercent">0%</strong>
+          </div>
+
+          <div class="goal-progress">
+            <div id="goalBar" class="goal-progress-bar"></div>
+          </div>
+
+          <div class="goal-values">
+            <span id="goalCurrent">R$ 0,00</span>
+            <span id="goalTargetDisplay">R$ 0,00</span>
+          </div>
+
+        </div>
+
+        <form id="goalForm" class="goal-form hidden" onsubmit="saveGoal(event)">
+
+          <div class="input-group">
+            <label for="goalName">Nome da meta</label>
+            <input
+              type="text"
+              id="goalName"
+              placeholder="Ex.: Meta de setembro"
+              required
+            >
+          </div>
+
+          <div class="input-group">
+            <label for="goalTarget">Valor da meta</label>
+            <input
+              type="number"
+              id="goalTarget"
+              min="0"
+              step="0.01"
+              placeholder="R$ 0,00"
+              required
+            >
+          </div>
+
+          <div class="goal-actions">
+            <button
+              type="button"
+              class="btn-secondary"
+              onclick="hideGoalForm()"
+            >
+              Cancelar
+            </button>
+
+            <button type="submit" class="btn-primary">
+              Salvar meta
+            </button>
+          </div>
+
+        </form>
+
+      </section>
+
+    </main>
+
+    <nav class="mobile-nav">
+
+      <button type="button" onclick="scrollToTop()">
+        <span>⌂</span>
+        <small>Início</small>
+      </button>
+
+      <button type="button" onclick="scrollToMatches()">
+        <span>⚽</span>
+        <small>Jogos</small>
+      </button>
+
+      <button type="button" onclick="scrollToBets()">
+        <span>▣</span>
+        <small>Apostas</small>
+      </button>
+
+      <button type="button" onclick="scrollToGoal()">
+        <span>◈</span>
+        <small>Meta</small>
+      </button>
+
+    </nav>
+
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="js/supabase.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>

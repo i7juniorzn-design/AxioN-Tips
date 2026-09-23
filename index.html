@@ -1,0 +1,486 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080b12">
+  <meta name="description" content="AxioN! Tips - Plataforma de acompanhamento de apostas esportivas">
+  <title>AxioN! Tips</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <div id="toast" class="toast"></div>
+
+  <main class="app-container">
+
+    <section id="loginScreen" class="screen active">
+      <div class="auth-container">
+        <div class="brand">
+          <div class="brand-mark">A!</div>
+          <h1>AxioN! <span>Tips</span></h1>
+          <p>Inteligência para suas apostas</p>
+        </div>
+
+        <div class="auth-card">
+          <h2>Bem-vindo</h2>
+          <p>Entre na sua conta para continuar.</p>
+
+          <form id="loginForm">
+            <div class="form-group">
+              <label for="loginEmail">E-mail</label>
+              <input
+                type="email"
+                id="loginEmail"
+                placeholder="seu@email.com"
+                required
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="loginPassword">Senha</label>
+              <input
+                type="password"
+                id="loginPassword"
+                placeholder="Sua senha"
+                required
+              >
+            </div>
+
+            <button type="submit" class="primary-button">
+              Entrar
+            </button>
+          </form>
+
+          <button type="button" class="text-button" id="showRegisterButton">
+            Criar uma conta
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section id="registerScreen" class="screen hidden">
+      <div class="auth-container">
+        <div class="brand">
+          <div class="brand-mark">A!</div>
+          <h1>AxioN! <span>Tips</span></h1>
+          <p>Crie seu espaço de análise</p>
+        </div>
+
+        <div class="auth-card">
+          <h2>Criar conta</h2>
+          <p>Preencha os dados para começar.</p>
+
+          <form id="registerForm">
+            <div class="form-group">
+              <label for="registerNickname">Nome de usuário</label>
+              <input
+                type="text"
+                id="registerNickname"
+                placeholder="Seu nome"
+                minlength="2"
+                required
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="registerEmail">E-mail</label>
+              <input
+                type="email"
+                id="registerEmail"
+                placeholder="seu@email.com"
+                required
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="registerPassword">Senha</label>
+              <input
+                type="password"
+                id="registerPassword"
+                placeholder="Mínimo de 6 caracteres"
+                minlength="6"
+                required
+              >
+            </div>
+
+            <button type="submit" class="primary-button">
+              Criar conta
+            </button>
+          </form>
+
+          <button type="button" class="text-button" id="showLoginButton">
+            Já tenho uma conta
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section id="appScreen" class="screen hidden">
+
+      <header class="app-header">
+        <div class="header-brand">
+          <span class="brand-symbol">A!</span>
+          <h1>AxioN! <span>Tips</span></h1>
+        </div>
+
+        <button type="button" class="logout-button" id="logoutButton">
+          Sair
+        </button>
+      </header>
+
+      <div class="app-content">
+
+        <section id="homeSection" class="page-section active-section">
+          <div class="hero-card">
+            <span class="eyebrow">PAINEL PRINCIPAL</span>
+            <h2>Olá, <span id="heroNickname">Usuário</span>!</h2>
+            <p>Acompanhe seus resultados e organize suas análises.</p>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-card">
+              <span>Saldo</span>
+              <strong id="profitValue">R$ 0,00</strong>
+            </div>
+
+            <div class="stat-card">
+              <span>Greens</span>
+              <strong id="greensValue">0</strong>
+            </div>
+
+            <div class="stat-card">
+              <span>Reds</span>
+              <strong id="redsValue">0</strong>
+            </div>
+
+            <div class="stat-card">
+              <span>Taxa de acerto</span>
+              <strong id="hitRateValue">0%</strong>
+            </div>
+          </div>
+
+          <div class="section-heading">
+            <h2>Acesso rápido</h2>
+          </div>
+
+          <div class="quick-actions">
+            <button type="button" class="action-card" data-section="matchesSection">
+              <span class="action-icon">⚽</span>
+              <strong>Partidas</strong>
+              <small>Ver jogos</small>
+            </button>
+
+            <button type="button" class="action-card" data-section="betsSection">
+              <span class="action-icon">▣</span>
+              <strong>Minhas apostas</strong>
+              <small>Acompanhar</small>
+            </button>
+
+            <button type="button" class="action-card" data-section="bankSection">
+              <span class="action-icon">◈</span>
+              <strong>Banca</strong>
+              <small>Ver resultados</small>
+            </button>
+
+            <button type="button" class="action-card" data-section="goalSection">
+              <span class="action-icon">◎</span>
+              <strong>Meta</strong>
+              <small>Seu objetivo</small>
+            </button>
+          </div>
+        </section>
+
+        <section id="matchesSection" class="page-section hidden">
+          <div class="section-heading">
+            <span class="eyebrow">ANÁLISES</span>
+            <h2>Partidas</h2>
+            <p>Área preparada para receber partidas futuramente.</p>
+          </div>
+
+          <div class="date-tabs">
+            <button type="button" class="date-tab active" data-day="0">
+              Hoje
+            </button>
+
+            <button type="button" class="date-tab" data-day="1">
+              Amanhã
+            </button>
+
+            <button type="button" class="date-tab" data-day="2">
+              +2 dias
+            </button>
+
+            <button type="button" class="date-tab" data-day="3">
+              +3 dias
+            </button>
+          </div>
+
+          <div id="matchesList" class="matches-list">
+            <div class="empty-state">
+              Nenhuma partida disponível no momento.
+            </div>
+          </div>
+        </section>
+
+        <section id="matchAnalysis" class="page-section hidden">
+          <div class="section-heading">
+            <span class="eyebrow">ANÁLISE</span>
+            <h2>Detalhes da partida</h2>
+          </div>
+
+          <div class="analysis-card">
+            <div class="analysis-header">
+              <span id="analysisLeague">Competição</span>
+              <span id="analysisTime">Horário</span>
+            </div>
+
+            <div class="analysis-teams">
+              <div class="analysis-team">
+                <span>Casa</span>
+                <strong id="analysisHome">Time da casa</strong>
+              </div>
+
+              <div class="analysis-team">
+                <span>Fora</span>
+                <strong id="analysisAway">Time visitante</strong>
+              </div>
+            </div>
+
+            <div class="analysis-details">
+              <div class="analysis-detail">
+                <span>Confiança</span>
+                <strong id="analysisConfidence">--</strong>
+              </div>
+
+              <div class="analysis-detail">
+                <span>Mercado</span>
+                <strong id="analysisMarket">--</strong>
+              </div>
+
+              <div class="analysis-detail">
+                <span>Seleção</span>
+                <strong id="analysisSelection">--</strong>
+              </div>
+
+              <div class="analysis-detail">
+                <span>Odd</span>
+                <strong id="analysisOdds">--</strong>
+              </div>
+            </div>
+
+            <form id="analysisForm" class="analysis-form">
+              <div class="form-group">
+                <label for="analysisStake">Valor da aposta</label>
+                <input
+                  type="number"
+                  id="analysisStake"
+                  min="0"
+                  step="0.01"
+                  placeholder="0,00"
+                >
+              </div>
+
+              <div class="form-group">
+                <label for="analysisNotes">Observações</label>
+                <textarea
+                  id="analysisNotes"
+                  placeholder="Adicione suas observações..."
+                ></textarea>
+              </div>
+
+              <div class="return-box">
+                <div>
+                  <span>Retorno potencial</span>
+                  <strong id="potentialReturn">R$ 0,00</strong>
+                </div>
+
+                <div>
+                  <span>Lucro potencial</span>
+                  <strong id="potentialProfit">R$ 0,00</strong>
+                </div>
+              </div>
+
+              <button type="submit" class="primary-button">
+                Salvar análise
+              </button>
+
+              <button type="button" class="secondary-button" id="closeAnalysisButton">
+                Voltar para partidas
+              </button>
+            </form>
+          </div>
+        </section>
+
+        <section id="betsSection" class="page-section hidden">
+          <div class="section-heading">
+            <span class="eyebrow">HISTÓRICO</span>
+            <h2>Minhas apostas</h2>
+            <p>Acompanhe os registros das suas apostas.</p>
+          </div>
+
+          <div class="filters">
+            <button type="button" class="filter-tab active" data-filter="all">
+              Todas
+            </button>
+
+            <button type="button" class="filter-tab" data-filter="pending">
+              Pendentes
+            </button>
+
+            <button type="button" class="filter-tab" data-filter="green">
+              Greens
+            </button>
+
+            <button type="button" class="filter-tab" data-filter="red">
+              Reds
+            </button>
+          </div>
+
+          <div id="betsList" class="bets-list">
+            <div class="empty-state">
+              Você ainda não possui apostas registradas.
+            </div>
+          </div>
+        </section>
+
+        <section id="bankSection" class="page-section hidden">
+          <div class="section-heading">
+            <span class="eyebrow">CONTROLE FINANCEIRO</span>
+            <h2>Minha banca</h2>
+            <p>Visualize os números do seu acompanhamento.</p>
+          </div>
+
+          <div class="bank-grid">
+            <div class="stat-card">
+              <span>Saldo atual</span>
+              <strong id="bankValue">R$ 0,00</strong>
+            </div>
+
+            <div class="stat-card">
+              <span>Greens</span>
+              <strong id="bankGreens">0</strong>
+            </div>
+
+            <div class="stat-card">
+              <span>Reds</span>
+              <strong id="bankReds">0</strong>
+            </div>
+
+            <div class="stat-card">
+              <span>Taxa de acerto</span>
+              <strong id="bankHitRate">0%</strong>
+            </div>
+          </div>
+
+          <div class="bank-card">
+            <h3>Resumo da banca</h3>
+            <p>Os valores serão atualizados conforme os registros forem adicionados.</p>
+          </div>
+        </section>
+
+        <section id="goalSection" class="page-section hidden">
+          <div class="section-heading">
+            <span class="eyebrow">PLANEJAMENTO</span>
+            <h2>Minha meta</h2>
+            <p>Defina um objetivo para acompanhar sua evolução.</p>
+          </div>
+
+          <div class="goal-card">
+            <div class="goal-header">
+              <div>
+                <span class="eyebrow">OBJETIVO ATUAL</span>
+                <h3 id="goalDisplayName">Minha primeira meta</h3>
+              </div>
+
+              <button type="button" class="small-button" id="showGoalFormButton">
+                Editar
+              </button>
+            </div>
+
+            <div class="goal-progress">
+              <div id="goalBar"></div>
+            </div>
+
+            <div class="goal-values">
+              <strong id="goalPercent">0%</strong>
+              <span>
+                <span id="goalCurrent">R$ 0,00</span>
+                de
+                <span id="goalTargetDisplay">R$ 0,00</span>
+              </span>
+            </div>
+
+            <form id="goalForm" class="goal-form hidden">
+              <div class="form-group">
+                <label for="goalName">Nome da meta</label>
+                <input
+                  type="text"
+                  id="goalName"
+                  placeholder="Ex.: Construir minha banca"
+                >
+              </div>
+
+              <div class="form-group">
+                <label for="goalTarget">Valor desejado</label>
+                <input
+                  type="number"
+                  id="goalTarget"
+                  min="0"
+                  step="0.01"
+                  placeholder="0,00"
+                >
+              </div>
+
+              <button type="submit" class="primary-button">
+                Salvar meta
+              </button>
+            </form>
+          </div>
+        </section>
+
+        <section id="profileSection" class="page-section hidden">
+          <div class="section-heading">
+            <span class="eyebrow">CONTA</span>
+            <h2>Meu perfil</h2>
+          </div>
+
+          <div class="profile-card">
+            <div class="profile-avatar">A!</div>
+            <h3 id="profileNickname">Usuário</h3>
+            <p id="profileEmail">usuario@email.com</p>
+          </div>
+        </section>
+
+      </div>
+
+      <nav class="bottom-nav">
+        <button type="button" class="nav-button active" data-section="homeSection">
+          <span>⌂</span>
+          <small>Início</small>
+        </button>
+
+        <button type="button" class="nav-button" data-section="matchesSection">
+          <span>⚽</span>
+          <small>Partidas</small>
+        </button>
+
+        <button type="button" class="nav-button" data-section="betsSection">
+          <span>▣</span>
+          <small>Apostas</small>
+        </button>
+
+        <button type="button" class="nav-button" data-section="profileSection">
+          <span>◉</span>
+          <small>Perfil</small>
+        </button>
+      </nav>
+
+    </section>
+
+  </main>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,561 @@
+const state = {
+  currentUser: null,
+  bets: [],
+  goal: {
+    name: "",
+    target: 0,
+    current: 0
+  },
+  selectedFilter: "all",
+  selectedDay: 0
+};
+
+function $(id) {
+  return document.getElementById(id);
+}
+
+function showScreen(screenId) {
+  document.querySelectorAll(".screen").forEach(screen => {
+    screen.classList.remove("active");
+    screen.classList.add("hidden");
+  });
+
+  const screen = $(screenId);
+
+  if (!screen) return;
+
+  screen.classList.remove("hidden");
+  screen.classList.add("active");
+}
+
+function showSection(sectionId) {
+  document.querySelectorAll("#appScreen .page-section").forEach(section => {
+    section.classList.remove("active-section");
+    section.classList.add("hidden");
+  });
+
+  const section = $(sectionId);
+
+  if (!section) return;
+
+  section.classList.remove("hidden");
+  section.classList.add("active-section");
+
+  document.querySelectorAll(".nav-button").forEach(button => {
+    button.classList.toggle(
+      "active",
+      button.dataset.section === sectionId
+    );
+  });
+}
+
+function showToast(message, type = "success") {
+  const toast = $("toast");
+
+  if (!toast) return;
+
+  toast.textContent = message;
+  toast.className = `toast ${type} show`;
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 3000);
+}
+
+function saveState() {
+  try {
+    localStorage.setItem(
+      "axionTipsState",
+      JSON.stringify(state)
+    );
+  } catch (error) {
+    console.error("Erro ao salvar:", error);
+  }
+}
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem("axionTipsState");
+
+    if (!saved) return;
+
+    const data = JSON.parse(saved);
+
+    if (data.currentUser) {
+      state.currentUser = data.currentUser;
+    }
+
+    if (Array.isArray(data.bets)) {
+      state.bets = data.bets;
+    }
+
+    if (data.goal) {
+      state.goal = {
+        ...state.goal,
+        ...data.goal
+      };
+    }
+
+    if (data.selectedFilter) {
+      state.selectedFilter = data.selectedFilter;
+    }
+
+    if (typeof data.selectedDay === "number") {
+      state.selectedDay = data.selectedDay;
+    }
+  } catch (error) {
+    console.error("Erro ao carregar:", error);
+  }
+}
+
+function formatMoney(value) {
+  return `R$ ${Number(value || 0)
+    .toFixed(2)
+    .replace(".", ",")}`;
+}
+  function updateUserData() {
+  if (!state.currentUser) return;
+
+  const nickname = state.currentUser.nickname || "Usuário";
+  const email = state.currentUser.email || "";
+
+  if ($("heroNickname")) {
+    $("heroNickname").textContent = nickname;
+  }
+
+  if ($("profileNickname")) {
+    $("profileNickname").value = nickname;
+  }
+
+  if ($("profileEmail")) {
+    $("profileEmail").value = email;
+  }
+}
+
+function handleLogin(event) {
+  event.preventDefault();
+
+  const email = $("loginEmail").value.trim();
+  const password = $("loginPassword").value.trim();
+
+  if (!email || !password) {
+    showToast("Preencha o e-mail e a senha.", "error");
+    return;
+  }
+
+  state.currentUser = {
+    nickname: email.split("@")[0],
+    email: email
+  };
+
+  saveState();
+  updateUserData();
+  updateStatistics();
+  updateGoal();
+
+  showScreen("appScreen");
+  showSection("homeSection");
+
+  showToast("Login realizado com sucesso.");
+}
+
+function handleRegister(event) {
+  event.preventDefault();
+
+  const nickname = $("registerNickname").value.trim();
+  const email = $("registerEmail").value.trim();
+  const password = $("registerPassword").value.trim();
+
+  if (!nickname || !email || !password) {
+    showToast("Preencha todos os campos.", "error");
+    return;
+  }
+
+  if (password.length < 6) {
+    showToast("A senha precisa ter pelo menos 6 caracteres.", "error");
+    return;
+  }
+
+  state.currentUser = {
+    nickname: nickname,
+    email: email
+  };
+
+  saveState();
+  updateUserData();
+  updateStatistics();
+  updateGoal();
+
+  showScreen("appScreen");
+  showSection("homeSection");
+
+  showToast("Cadastro realizado com sucesso.");
+}
+
+function handleLogout() {
+  state.currentUser = null;
+
+  saveState();
+
+  if ($("loginForm")) {
+    $("loginForm").reset();
+  }
+
+  showScreen("loginScreen");
+  showToast("Sessão encerrada.");
+}
+
+function setupAuthentication() {
+  if ($("loginForm")) {
+    $("loginForm").addEventListener("submit", handleLogin);
+  }
+
+  if ($("registerForm")) {
+    $("registerForm").addEventListener("submit", handleRegister);
+  }
+
+  if ($("showRegisterButton")) {
+    $("showRegisterButton").addEventListener("click", () => {
+      showScreen("registerScreen");
+    });
+  }
+
+  if ($("showLoginButton")) {
+    $("showLoginButton").addEventListener("click", () => {
+      showScreen("loginScreen");
+    });
+  }
+
+  if ($("logoutButton")) {
+    $("logoutButton").addEventListener("click", handleLogout);
+  }
+}
+               function setupNavigation() {
+  document.querySelectorAll("[data-section]").forEach(button => {
+    button.addEventListener("click", () => {
+      const sectionId = button.dataset.section;
+
+      if (!sectionId) return;
+
+      showSection(sectionId);
+    });
+  });
+}
+
+function setupDateTabs() {
+  document.querySelectorAll("[data-day]").forEach(button => {
+    button.addEventListener("click", () => {
+      document.querySelectorAll("[data-day]").forEach(tab => {
+        tab.classList.remove("active");
+      });
+
+      button.classList.add("active");
+
+      state.selectedDay = Number(button.dataset.day);
+
+      renderMatches();
+    });
+  });
+}
+
+function renderMatches() {
+  const matchesList = $("matchesList");
+
+  if (!matchesList) return;
+
+  matchesList.innerHTML = `
+    <div class="empty-state">
+      <h3>Nenhuma partida disponível</h3>
+      <p>As partidas serão carregadas quando a API for adicionada.</p>
+    </div>
+  `;
+}
+
+function setupAnalysis() {
+  const stakeInput = $("analysisStake");
+  const oddsInput = $("analysisOdds");
+  const analysisForm = $("analysisForm");
+  const closeButton = $("closeAnalysisButton");
+
+  function calculateReturn() {
+    const stake = Number(stakeInput?.value) || 0;
+    const odds = Number(oddsInput?.value) || 0;
+
+    const total = stake * odds;
+    const profit = total - stake;
+
+    if ($("potentialReturn")) {
+      $("potentialReturn").textContent = formatMoney(total);
+    }
+
+    if ($("potentialProfit")) {
+      $("potentialProfit").textContent = formatMoney(profit);
+    }
+  }
+
+  if (stakeInput) {
+    stakeInput.addEventListener("input", calculateReturn);
+  }
+
+  if (oddsInput) {
+    oddsInput.addEventListener("input", calculateReturn);
+  }
+
+  if (closeButton) {
+    closeButton.addEventListener("click", () => {
+      showSection("matchesSection");
+    });
+  }
+
+  if (analysisForm) {
+    analysisForm.addEventListener("submit", event => {
+      event.preventDefault();
+
+      const stake = Number($("analysisStake").value) || 0;
+      const odds = Number($("analysisOdds").value) || 0;
+
+      if (stake <= 0 || odds <= 1) {
+        showToast("Informe uma stake e uma odd válidas.", "error");
+        return;
+      }
+
+      const bet = {
+        id: Date.now(),
+        home: $("analysisHome").textContent,
+        away: $("analysisAway").textContent,
+        league: $("analysisLeague").textContent,
+        time: $("analysisTime").textContent,
+        selection: $("analysisSelection").textContent,
+        market: $("analysisMarket").textContent,
+        confidence: $("analysisConfidence").textContent,
+        odds: odds,
+        stake: stake,
+        notes: $("analysisNotes").value.trim(),
+        status: "pending",
+        result: "pending",
+        profit: 0
+      };
+
+      state.bets.push(bet);
+
+      saveState();
+      updateStatistics();
+      renderBets();
+
+      analysisForm.reset();
+      calculateReturn();
+
+      showToast("Palpite salvo com sucesso.");
+      showSection("betsSection");
+    });
+  }
+}
+        function updateStatistics() {
+  const greens = state.bets.filter(
+    bet => bet.result === "green"
+  ).length;
+
+  const reds = state.bets.filter(
+    bet => bet.result === "red"
+  ).length;
+
+  const completed = greens + reds;
+
+  const hitRate = completed > 0
+    ? ((greens / completed) * 100).toFixed(1)
+    : "0.0";
+
+  const profit = state.bets.reduce(
+    (total, bet) => total + Number(bet.profit || 0),
+    0
+  );
+
+  if ($("profitValue")) $("profitValue").textContent = formatMoney(profit);
+  if ($("greensValue")) $("greensValue").textContent = greens;
+  if ($("redsValue")) $("redsValue").textContent = reds;
+  if ($("hitRateValue")) $("hitRateValue").textContent = `${hitRate}%`;
+
+  if ($("bankValue")) $("bankValue").textContent = formatMoney(profit);
+  if ($("bankGreens")) $("bankGreens").textContent = greens;
+  if ($("bankReds")) $("bankReds").textContent = reds;
+  if ($("bankHitRate")) $("bankHitRate").textContent = `${hitRate}%`;
+}
+
+function renderBets() {
+  const betsList = $("betsList");
+
+  if (!betsList) return;
+
+  let bets = [...state.bets];
+
+  if (state.selectedFilter !== "all") {
+    bets = bets.filter(bet => {
+      if (state.selectedFilter === "pending") {
+        return bet.status === "pending";
+      }
+
+      return bet.result === state.selectedFilter;
+    });
+  }
+
+  if (bets.length === 0) {
+    betsList.innerHTML = `
+      <div class="empty-state">
+        <h3>Nenhum palpite encontrado</h3>
+        <p>Seus palpites aparecerão nesta área.</p>
+      </div>
+    `;
+
+    return;
+  }
+
+  betsList.innerHTML = bets.map(bet => `
+    <article class="bet-card">
+      <div class="bet-card-header">
+        <strong>${bet.home} x ${bet.away}</strong>
+        <span>${bet.result === "pending" ? "Pendente" : bet.result}</span>
+      </div>
+      <p>${bet.selection}</p>
+      <p>Odd: ${bet.odds}</p>
+      <p>Stake: ${formatMoney(bet.stake)}</p>
+    </article>
+  `).join("");
+}
+
+function setupBetFilters() {
+  document.querySelectorAll("[data-filter]").forEach(button => {
+    button.addEventListener("click", () => {
+      document.querySelectorAll("[data-filter]").forEach(item => {
+        item.classList.remove("active");
+      });
+
+      button.classList.add("active");
+
+      state.selectedFilter = button.dataset.filter;
+
+      renderBets();
+    });
+  });
+}
+
+function updateGoal() {
+  const target = Number(state.goal.target) || 0;
+  const current = Number(state.goal.current) || 0;
+
+  const percentage = target > 0
+    ? Math.min((current / target) * 100, 100)
+    : 0;
+
+  if ($("goalDisplayName")) {
+    $("goalDisplayName").textContent =
+      state.goal.name || "Minha meta";
+  }
+
+  if ($("goalPercent")) {
+    $("goalPercent").textContent =
+      `${percentage.toFixed(0)}%`;
+  }
+
+  if ($("goalCurrent")) {
+    $("goalCurrent").textContent = formatMoney(current);
+  }
+
+  if ($("goalTargetDisplay")) {
+    $("goalTargetDisplay").textContent = formatMoney(target);
+  }
+
+  if ($("goalBar")) {
+    $("goalBar").style.width = `${percentage}%`;
+  }
+}
+
+function setupGoal() {
+  const showGoalButton = $("showGoalFormButton");
+  const goalForm = $("goalForm");
+
+  if (showGoalButton && goalForm) {
+    showGoalButton.addEventListener("click", () => {
+      goalForm.classList.toggle("hidden");
+    });
+  }
+
+  if (goalForm) {
+    goalForm.addEventListener("submit", event => {
+      event.preventDefault();
+
+      const name = $("goalName").value.trim();
+      const target = Number($("goalTarget").value);
+
+      if (!name || target <= 0) {
+        showToast("Informe um nome e um valor válido.", "error");
+        return;
+      }
+
+      state.goal.name = name;
+      state.goal.target = target;
+
+      saveState();
+      updateGoal();
+
+      goalForm.classList.add("hidden");
+
+      showToast("Meta salva com sucesso.");
+    });
+  }
+}
+    function setupQuickActions() {
+  document.querySelectorAll(".action-card[data-section]").forEach(card => {
+    card.addEventListener("click", () => {
+      const sectionId = card.dataset.section;
+
+      if (sectionId) {
+        showSection(sectionId);
+      }
+    });
+  });
+}
+
+function setupProfile() {
+  if (!state.currentUser) return;
+
+  if ($("profileNickname")) {
+    $("profileNickname").value =
+      state.currentUser.nickname || "";
+  }
+
+  if ($("profileEmail")) {
+    $("profileEmail").value =
+      state.currentUser.email || "";
+  }
+}
+
+function initializeApp() {
+  loadState();
+
+  setupAuthentication();
+  setupNavigation();
+  setupDateTabs();
+  setupAnalysis();
+  setupBetFilters();
+  setupGoal();
+  setupQuickActions();
+  setupProfile();
+
+  renderMatches();
+  renderBets();
+  updateStatistics();
+  updateGoal();
+
+  if (state.currentUser) {
+    updateUserData();
+    showScreen("appScreen");
+    showSection("homeSection");
+  } else {
+    showScreen("loginScreen");
+  }
+}
+
+document.addEventListener(
+  "DOMContentLoaded",
+  initializeApp
+);

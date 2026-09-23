@@ -1,40 +1,15 @@
-/* Controle das telas do AxioN! Tips */
-
 #loginScreen,
 #registerScreen,
 #appScreen {
   display: none !important;
-  visibility: hidden;
-  opacity: 0;
 }
-
-/* Mostrar somente a tela ativa */
 
 #loginScreen.active,
 #registerScreen.active,
 #appScreen.active {
   display: block !important;
-  visibility: visible;
-  opacity: 1;
 }
-/* Controle de visibilidade das telas */
 
 .hidden {
   display: none !important;
-}
-
-.screen {
-  display: none;
-}
-
-.screen.active {
-  display: block;
-}
-
-#appScreen {
-  display: none;
-}
-
-#appScreen.active {
-  display: block;
 }

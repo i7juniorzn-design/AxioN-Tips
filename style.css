@@ -1,0 +1,15 @@
+/* Controle das telas */
+
+#loginScreen,
+#registerScreen,
+#appScreen {
+  display: none;
+}
+
+/* Tela atualmente ativa */
+
+#loginScreen.active,
+#registerScreen.active,
+#appScreen.active {
+  display: block;
+}

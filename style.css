@@ -17,3 +17,24 @@
   visibility: visible;
   opacity: 1;
 }
+/* Controle de visibilidade das telas */
+
+.hidden {
+  display: none !important;
+}
+
+.screen {
+  display: none;
+}
+
+.screen.active {
+  display: block;
+}
+
+#appScreen {
+  display: none;
+}
+
+#appScreen.active {
+  display: block;
+}

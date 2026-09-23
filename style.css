@@ -1,0 +1,35 @@
+#loginScreen,
+#registerScreen,
+#appScreen {
+  display: none !important;
+}
+
+#loginScreen.active,
+#registerScreen.active,
+#appScreen.active {
+  display: block !important;
+}
+
+.hidden {
+  display: none !important;
+}
+
+#appScreen .page-section {
+  display: none !important;
+}
+
+#appScreen .page-section.active-section {
+  display: block !important;
+}
+
+#appScreen .page-section.hidden {
+  display: none !important;
+}
+
+.goal-form.hidden {
+  display: none !important;
+}
+
+.goal-form:not(.hidden) {
+  display: block !important;
+}

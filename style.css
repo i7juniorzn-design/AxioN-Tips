@@ -1,15 +1,19 @@
-/* Controle das telas */
+/* Controle das telas do AxioN! Tips */
 
 #loginScreen,
 #registerScreen,
 #appScreen {
-  display: none;
+  display: none !important;
+  visibility: hidden;
+  opacity: 0;
 }
 
-/* Tela atualmente ativa */
+/* Mostrar somente a tela ativa */
 
 #loginScreen.active,
 #registerScreen.active,
 #appScreen.active {
-  display: block;
+  display: block !important;
+  visibility: visible;
+  opacity: 1;
 }
